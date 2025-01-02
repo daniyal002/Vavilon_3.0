@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { axiosAuth } from '../api/axios';
+import { axiosAuth, axiosClassic } from '../api/axios';
 import { ShowTime, CreateShowTimeDTO, UpdateShowTimeDTO } from '../types/showtime';
 
 
@@ -10,7 +10,7 @@ export const useShowTimes = () => {
   const showTimesQuery = useQuery({
     queryKey: ['showTimes'],
     queryFn: async () => {
-      const { data } = await axiosAuth.get<ShowTime[]>('/showtimes');
+      const { data } = await axiosClassic.get<ShowTime[]>('/showtimes');
       return data;
     },
   });
