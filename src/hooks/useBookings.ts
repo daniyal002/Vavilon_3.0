@@ -76,6 +76,16 @@ export const useBookings = () => {
     },
   });
 
+  const confirmBookingMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const { data } = await axiosAuth.patch(`/bookings/${id}/confirm`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+  });
+
   return {
     bookingsQuery,
     useBookingsByPhone,
@@ -83,5 +93,6 @@ export const useBookings = () => {
     createBookingMutation,
     updateBookingMutation,
     deleteBookingMutation,
+    confirmBookingMutation,
   };
 };

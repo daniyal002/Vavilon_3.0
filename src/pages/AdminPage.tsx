@@ -10,6 +10,7 @@ import { ProductsTable } from '../components/admin/products/ProductsTable';
 import { ProductCategoriesTable } from '../components/admin/products/ProductCategoriesTable';
 import { UserRolesTable } from '../components/admin/role/UserRolesTable';
 import { UsersTable } from '../components/admin/users/UsersTable';
+import { ShowTimesBookingTable } from '../components/admin/showtimes/ShowTimesBookingTable';
 
 type AdminTab =
   | 'genres'
@@ -20,7 +21,8 @@ type AdminTab =
   | 'products'
   | 'productCategories'
   | 'users'
-  | 'userRoles';
+  | 'userRoles'
+  | 'bookings';
 
 export function AdminPage() {
   const isAuthenticated  = getAccessToken();
@@ -139,6 +141,17 @@ export function AdminPage() {
         >
           Управление ролями пользователей
         </button>
+        <button
+          onClick={() => setActiveTab('bookings')}
+          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
+            ${
+              activeTab === 'bookings'
+                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
+                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
+            }`}
+        >
+          Управление бронированиями
+        </button>
       </div>
 
       <div className="space-y-6">
@@ -222,7 +235,7 @@ export function AdminPage() {
             </h2>
             <UsersTable />
           </>
-        ) : (
+        ) : activeTab === 'userRoles' ? (
           <>
             <h2
               className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
@@ -231,6 +244,16 @@ export function AdminPage() {
               Управление ролями пользователей
             </h2>
             <UserRolesTable />
+          </>
+        ) : (
+          <>
+            <h2
+              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
+              bg-gradient-to-r from-purple-400 to-pink-400"
+            >
+              Управление бронированиями
+            </h2>
+            <ShowTimesBookingTable />
           </>
         )}
       </div>
