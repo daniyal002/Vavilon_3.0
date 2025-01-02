@@ -1,13 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import api from '../api/axios';
-import { LoginCredentials, AuthResponse } from '../types/auth';
+import { LoginCredentials } from '../types/auth';
+import { AuthService } from '../services/auth.service';
 
 export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
-      const { data } = await api.post<AuthResponse>('/auth/login', credentials);
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
+      const { data } = await AuthService.login(credentials.phone,credentials.password)
       return data;
     },
   });

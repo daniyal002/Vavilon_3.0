@@ -1,4 +1,3 @@
-import React from 'react';
 import { BookedPostersList } from '../components/booked/BookedPostersList';
 
 export function BookedPosters() {

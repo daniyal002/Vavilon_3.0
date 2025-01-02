@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../api/axios';
+import { axiosAuth, axiosClassic } from '../api/axios';
 import { Genre } from '../types/genre';
 
 export const useGenres = () => {
@@ -8,14 +8,14 @@ export const useGenres = () => {
   const genresQuery = useQuery({
     queryKey: ['genres'],
     queryFn: async () => {
-      const { data } = await api.get<Genre[]>('/genres');
+      const { data } = await axiosClassic.get<Genre[]>('/genres');
       return data.sort((a, b) => a.id - b.id);
     },
   });
 
   const createGenreMutation = useMutation({
     mutationFn: async (name: string) => {
-      const { data } = await api.post<Genre>('/genres', { name });
+      const { data } = await axiosAuth.post<Genre>('/genres', { name });
       return data;
     },
     onSuccess: (newGenre) => {
@@ -28,7 +28,7 @@ export const useGenres = () => {
 
   const updateGenreMutation = useMutation({
     mutationFn: async ({ id, name }: { id: number; name: string }) => {
-      const { data } = await api.put<Genre>(`/genres/${id}`, { name });
+      const { data } = await axiosAuth.put<Genre>(`/genres/${id}`, { name });
       return data;
     },
     onSuccess: (updatedGenre) => {
@@ -43,7 +43,7 @@ export const useGenres = () => {
 
   const deleteGenreMutation = useMutation({
     mutationFn: async (id: number) => {
-      await api.delete(`/genres/${id}`);
+      await axiosAuth.delete(`/genres/${id}`);
       return id;
     },
     onSuccess: (deletedId) => {

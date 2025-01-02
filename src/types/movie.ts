@@ -1,10 +1,16 @@
+import { Genre } from "./genre";
+
 export interface Movie {
-  id: string;
+  id?: number;
   title: string;
-  imageUrl: string;
-  poster: string;
-  genres: string[];
-  price: number;
-  showtime: string;
   description: string;
+  rating: number;
+  year: number;
+  ageRestriction: string;
+  trailerLink: string;
+  premiere: boolean;
+  genreIds: number[];
+  genres?: Genre[];
+  imagePath?: string;
+  image?: File;
 }

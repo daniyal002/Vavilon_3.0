@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../api/axios';
+import { axiosAuth, axiosClassic } from '../api/axios';
 import { Theater } from '../types/theater';
 
 export const useTheaters = () => {
@@ -8,14 +8,14 @@ export const useTheaters = () => {
   const theatersQuery = useQuery({
     queryKey: ['theaters'],
     queryFn: async () => {
-      const { data } = await api.get<Theater[]>('/theaters');
+      const { data } = await axiosClassic.get<Theater[]>('/theaters');
       return data;
     },
   });
 
   const createTheaterMutation = useMutation({
     mutationFn: async (theater: Omit<Theater, 'id'>) => {
-      const { data } = await api.post<Theater>('/theaters', theater);
+      const { data } = await axiosAuth.post<Theater>('/theaters', theater);
       return data;
     },
     onSuccess: (newTheater) => {
@@ -28,7 +28,7 @@ export const useTheaters = () => {
 
   const updateTheaterMutation = useMutation({
     mutationFn: async (theater: Theater) => {
-      const { data } = await api.put<Theater>(
+      const { data } = await axiosAuth.put<Theater>(
         `/theaters/${theater.id}`,
         theater
       );
@@ -46,7 +46,7 @@ export const useTheaters = () => {
 
   const deleteTheaterMutation = useMutation({
     mutationFn: async (id: number) => {
-      await api.delete(`/theaters/${id}`);
+      await axiosAuth.delete(`/theaters/${id}`);
       return id;
     },
     onSuccess: (deletedId) => {
