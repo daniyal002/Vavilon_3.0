@@ -9,7 +9,14 @@ import { AdminPage } from './pages/AdminPage';
 import { MoviePage } from './pages/MoviePage';
 
 export function App() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: false,
+      },
+    },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>

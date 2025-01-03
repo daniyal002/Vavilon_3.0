@@ -8,6 +8,7 @@ import { BookedPoster } from '../types/bookedPoster';
 import { ShowTime } from '../types/showtime';
 import { formatTime } from '../utils/formatters';
 import { useBookings } from '../hooks/useBookings';
+import { usePromoCodes } from '../hooks/usePromoCodes';
 
 interface BookingFormProps {
   showTime: ShowTime;
@@ -29,9 +30,18 @@ export function BookingForm({
   const [seats, setSeats] = useState(editMode ? initialBooking?.seats || 1 : 1);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [promoCode, setPromoCode] = useState('');
-  const totalPrice = showTime.price * seats;
+  const [discount, setDiscount] = useState(0);
+  const [promoError, setPromoError] = useState('');
+
+  const basePrice = showTime.price * seats;
+  const totalPrice = basePrice - basePrice * discount;
+
   const { addBookedPoster, editBookedPoster } = useBookedPosters();
   const { createBookingMutation } = useBookings();
+  const { useCheckPromoCode } = usePromoCodes();
+  const promoCodeQuery = useCheckPromoCode(promoCode, {
+    enabled: false,
+  });
 
   const { mutate: createBooking } = createBookingMutation;
 
@@ -85,7 +95,32 @@ export function BookingForm({
   };
 
   const handleApplyPromo = () => {
-    // Логика применения промокода
+    setPromoError('');
+
+    if (!promoCode) {
+      setPromoError('Введите промокод');
+      return;
+    }
+
+    promoCodeQuery.refetch().then(({ data, error }) => {
+      if (error) {
+        setPromoError('Ошибка при проверке промокода');
+        setDiscount(0);
+        return;
+      }
+
+      if (!data) {
+        setPromoError('Промокод не найден');
+        setDiscount(0);
+        return;
+      }
+
+      if (data.type === 'percent') {
+        setDiscount(data.value / 100);
+      } else if (data.type === 'fixed') {
+        setDiscount(data.value / basePrice);
+      }
+    });
   };
 
   return (
@@ -131,7 +166,18 @@ export function BookingForm({
           value={promoCode}
           onChange={setPromoCode}
           onApply={handleApplyPromo}
+          error={promoError}
         />
+
+        {discount > 0 && (
+          <div className="flex justify-between text-sm">
+            <span className="text-purple-300">Скидка:</span>
+            <span className="text-green-400">
+              {Math.round(discount * 100)}% (-{Math.round(basePrice * discount)}{' '}
+              ₽)
+            </span>
+          </div>
+        )}
 
         <div className="pt-4 border-t border-purple-700/30">
           <div className="flex justify-between text-lg font-semibold text-purple-200 mb-6">

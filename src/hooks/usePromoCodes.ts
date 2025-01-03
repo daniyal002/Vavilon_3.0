@@ -30,14 +30,14 @@ export const usePromoCodes = () => {
   };
 
   // Проверка промокода по коду
-  const useCheckPromoCode = (code: string) => {
+  const useCheckPromoCode = (code: string, options?: { enabled: boolean }) => {
     return useQuery<PromoCode>({
       queryKey: ['promoCode', code],
       queryFn: async () => {
         const { data } = await axiosAuth.get(`/promocodes/code/${code}`);
         return data;
       },
-      enabled: !!code, // Запрос выполняется только если код предоставлен
+      enabled: options?.enabled ?? !!code,
     });
   };
 
