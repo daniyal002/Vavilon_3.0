@@ -9,6 +9,7 @@ import { ShowTime } from '../types/showtime';
 import { formatTime } from '../utils/formatters';
 import { useBookings } from '../hooks/useBookings';
 import { usePromoCodes } from '../hooks/usePromoCodes';
+import { SeatSelector } from './booking/SeatSelector';
 
 interface BookingFormProps {
   showTime: ShowTime;
@@ -32,8 +33,14 @@ export function BookingForm({
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
   const [promoError, setPromoError] = useState('');
+  const [selectedSeats, setSelectedSeats] = useState<
+    Array<{ row: number; seat: number }>
+  >([]);
 
-  const basePrice = showTime.price * seats;
+  const basePrice =
+    showTime.price *
+    (showTime.theater.type === 'VIP' ? selectedSeats.length : seats);
+
   const totalPrice = basePrice - basePrice * discount;
 
   const { addBookedPoster, editBookedPoster } = useBookedPosters();
@@ -47,51 +54,64 @@ export function BookingForm({
 
   const isPhoneValid = phoneNumber.replace(/\D/g, '').length === 11;
 
+  const handleSeatSelect = (row: number, seat: number) => {
+    setSelectedSeats((prev) => {
+      const isSelected = prev.some((s) => s.row === row && s.seat === seat);
+      if (isSelected) {
+        return prev.filter((s) => !(s.row === row && s.seat === seat));
+      }
+      return [...prev, { row, seat }];
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isPhoneValid) {
-      return;
-    }
-
-    const bookingData = {
-      seats,
-      phoneNumber: phoneNumber.replace(/[^\d]/g, ''),
-      totalPrice,
-      bookingDate:
-        editMode && initialBooking
-          ? initialBooking.bookingDate
-          : new Date().toISOString(),
-    };
-
-    if (editMode && initialBooking) {
-      editBookedPoster(initialBooking.id, bookingData);
-      createBooking({
+    createBooking(
+      {
         showTimeId: showTime.id,
-        phone: phoneNumber.replace(/[^\d]/g, ''),
-        reservedSeats: seats,
+        phone: phoneNumber,
+        reservedSeats:
+          showTime.theater.type === 'VIP' ? selectedSeats.length : seats,
         totalAmount: totalPrice,
-      });
-    } else {
-      const newBooking = {
-        id: showTime.id.toString(),
-        movieId: showTime.movie.id?.toString() || '',
-        title: showTime.movie.title,
-        imageUrl: showTime.movie.imagePath || '',
-        showtime: formatTime(showTime.startTime.toString()),
-        ...bookingData,
-      };
-      addBookedPoster(newBooking);
-      createBooking({
-        showTimeId: showTime.id,
-        phone: phoneNumber.replace(/[^\d]/g, ''),
-        reservedSeats: seats,
-        totalAmount: totalPrice,
-      });
-    }
-
-    onSuccess?.();
-    onClose();
+        row:
+          showTime.theater.type === 'VIP'
+            ? selectedSeats.map((s) => s.row)
+            : undefined,
+        seatPerRow:
+          showTime.theater.type === 'VIP'
+            ? selectedSeats.map((s) => s.seat)
+            : undefined,
+      },
+      {
+        onSuccess: () => {
+          addBookedPoster({
+            id: showTime.id.toString(),
+            title: showTime.movie.title,
+            imageUrl: showTime.movie.imagePath as string,
+            phoneNumber: phoneNumber,
+            seats:
+              showTime.theater.type === 'VIP' ? selectedSeats.length : seats,
+            totalPrice: totalPrice,
+            showtime: formatTime(showTime.startTime.toString()),
+            bookingDate: new Date().toISOString(),
+            movieId: showTime.movieId.toString(),
+            row:
+              showTime.theater.type === 'VIP'
+                ? selectedSeats.map((s) => s.row)
+                : undefined,
+            seatPerRow:
+              showTime.theater.type === 'VIP'
+                ? selectedSeats.map((s) => s.seat)
+                : undefined,
+            theaterType: showTime.theater.type,
+            theater:showTime.theater.name
+          });
+          onSuccess?.();
+          onClose?.();
+        },
+      }
+    );
   };
 
   const handleApplyPromo = () => {
@@ -122,6 +142,14 @@ export function BookingForm({
       }
     });
   };
+
+  const bookedSeats =
+    showTime.bookings?.flatMap((booking) =>
+      booking.row.map((row, index) => ({
+        row,
+        seat: booking.seatPerRow[index],
+      }))
+    ) || [];
 
   return (
     <div className="bg-purple-950/50 rounded-xl p-6 shadow-lg animate-fadeSlide">
@@ -154,13 +182,27 @@ export function BookingForm({
           required={true}
         />
 
-        <NumberInput
-          label="Количество мест"
-          value={seats}
-          onChange={setSeats}
-          min={1}
-          max={10}
-        />
+        {showTime.theater.type === 'VIP' ? (
+          showTime.theater.rows &&
+          showTime.theater.seatsPerRow && (
+            <SeatSelector
+              rows={showTime.theater.rows}
+              seatsPerRow={showTime.theater.seatsPerRow}
+              selectedSeats={selectedSeats}
+              onSelect={handleSeatSelect}
+              maxSeats={showTime.theater.rows * showTime.theater.seatsPerRow}
+              bookedSeats={bookedSeats}
+            />
+          )
+        ) : (
+          <NumberInput
+            label="Количество мест"
+            value={seats}
+            onChange={setSeats}
+            min={1}
+            max={showTime.availableSeats}
+          />
+        )}
 
         <PromoCodeInput
           value={promoCode}

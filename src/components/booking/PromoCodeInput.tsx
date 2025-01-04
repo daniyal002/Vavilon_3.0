@@ -13,7 +13,7 @@ export function PromoCodeInput({
 }: PromoCodeInputProps) {
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-col">
         <input
           type="text"
           value={value}

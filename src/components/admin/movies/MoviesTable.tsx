@@ -25,11 +25,13 @@ export function MoviesTable() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   const {
-    moviesQuery,
+    useMoviesQuery,
     createMovieMutation,
     updateMovieMutation,
     deleteMovieMutation,
   } = useMovies();
+
+  const moviesQuery = useMoviesQuery();
 
   const { genresQuery } = useGenres();
 

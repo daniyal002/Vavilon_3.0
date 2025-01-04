@@ -12,6 +12,9 @@ interface BookedPosterCardProps {
   phoneNumber: string;
   totalPrice: number;
   bookingDate: string;
+  row?: number[];
+  seatPerRow?: number[];
+  theater?:string;
 }
 
 export function BookedPosterCard(props: BookedPosterCardProps) {
@@ -45,7 +48,20 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
           <p>Сеанс: {props.showtime}</p>
           <p>Мест: {props.seats}</p>
           <p>Телефон: {props.phoneNumber}</p>
+          {props.theater && (
+            <p>Зал: {props.theater}</p>
+          )}
           <p>Дата бронирования: {bookingDate}</p>
+          {props.row && (
+            <p>Ряд:
+            {Array.from(new Set(props.row)).join(
+              ', '
+            )}
+            </p>
+          )}
+          {props.seatPerRow && (
+            <p>Место: {props.seatPerRow.sort().join(', ')}</p>
+          )}
           <p className="text-purple-200 font-semibold">Итого: {props.totalPrice} ₽</p>
         </div>
       </div>

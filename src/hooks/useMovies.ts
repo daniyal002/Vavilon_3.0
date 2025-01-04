@@ -6,13 +6,14 @@ import { Movie } from '../types/movie';
 export const useMovies = () => {
   const queryClient = useQueryClient();
 
-  const moviesQuery = useQuery({
-    queryKey: ['movies'],
-    queryFn: async () => {
-      const { data } = await axiosAuth.get<Movie[]>('/movies');
-      return data;
-    },
-  });
+  const useMoviesQuery = () =>
+    useQuery({
+      queryKey: ['movies'],
+      queryFn: async () => {
+        const { data } = await axiosAuth.get<Movie[]>('/movies');
+        return data;
+      },
+    });
 
   const createMovieMutation = useMutation({
     mutationFn: async (movieData: Movie) => {
@@ -106,7 +107,7 @@ export const useMovies = () => {
     });
 
   return {
-    moviesQuery,
+    useMoviesQuery,
     createMovieMutation,
     updateMovieMutation,
     deleteMovieMutation,

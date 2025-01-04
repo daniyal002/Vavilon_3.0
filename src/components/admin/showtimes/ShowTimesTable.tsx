@@ -32,7 +32,9 @@ export function ShowTimesTable() {
     deleteShowTimeMutation,
   } = useShowTimes();
 
-  const { moviesQuery } = useMovies();
+  const  {useMoviesQuery}  = useMovies();
+  const moviesQuery = useMoviesQuery()
+
   const { theatersQuery } = useTheaters();
 
   const filteredAndPaginatedData = useMemo(() => {

@@ -1,12 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosAuth, axiosClassic } from '../api/axios';
-import { ShowTime, CreateShowTimeDTO, UpdateShowTimeDTO } from '../types/showtime';
-
+import {
+  ShowTime,
+  CreateShowTimeDTO,
+  UpdateShowTimeDTO,
+} from '../types/showtime';
 
 export const useShowTimes = () => {
   const queryClient = useQueryClient();
 
-  // Получение всех сеансов
+  // Получение всех сеансов для публичной части
   const showTimesQuery = useQuery({
     queryKey: ['showTimes'],
     queryFn: async () => {
@@ -15,16 +18,17 @@ export const useShowTimes = () => {
     },
   });
 
-  // Получение сеансов с количеством бронирований
-  const showTimesWithBookingsQuery = useQuery({
-    queryKey: ['showTimesWithBookings'],
-    queryFn: async () => {
-      const { data } = await axiosAuth.get(
-        '/showtimes/allShowTimesWithBookingCount'
-      );
-      return data;
-    },
-  });
+  // Получение сеансов с бронированиями для админки
+  const useShowTimesWithBookings = () =>
+    useQuery({
+      queryKey: ['showTimesWithBookings'],
+      queryFn: async () => {
+        const { data } = await axiosAuth.get(
+          '/showtimes/allShowTimesWithBookingCount'
+        );
+        return data;
+      },
+    });
 
   // Создание сеанса
   const createShowTimeMutation = useMutation({
@@ -105,7 +109,7 @@ export const useShowTimes = () => {
 
   return {
     showTimesQuery,
-    showTimesWithBookingsQuery,
+    useShowTimesWithBookings,
     createShowTimeMutation,
     updateShowTimeMutation,
     deleteShowTimeMutation,

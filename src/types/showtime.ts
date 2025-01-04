@@ -15,6 +15,8 @@ export interface ShowTime {
   theater: Theater;
   bookings: Booking[];
   reservedSeatsCount?: number;
+  availableSeats?:number,
+  
 }
 
 export interface CreateShowTimeDTO {

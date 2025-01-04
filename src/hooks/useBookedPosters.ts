@@ -10,6 +10,10 @@ interface BookedPoster {
   phoneNumber: string;
   totalPrice: number;
   bookingDate: string;
+  row?: number[];
+  seatPerRow?: number[];
+  theaterType?: string;
+  theater?:string;
 }
 
 // Создаем кастомное событие для синхронизации между вкладками
@@ -41,7 +45,10 @@ export function useBookedPosters() {
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener(STORAGE_EVENT, handleCustomEvent as EventListener);
+      window.removeEventListener(
+        STORAGE_EVENT,
+        handleCustomEvent as EventListener
+      );
     };
   }, []);
 
@@ -50,32 +57,41 @@ export function useBookedPosters() {
     setBookedPosters(updatedPosters);
     localStorage.setItem('bookedPosters', JSON.stringify(updatedPosters));
     // Вызываем кастомное событие для обновления всех компонентов
-    window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: updatedPosters }));
+    window.dispatchEvent(
+      new CustomEvent(STORAGE_EVENT, { detail: updatedPosters })
+    );
   };
 
   const removeBookedPoster = (posterId: string) => {
-    const updatedPosters = bookedPosters.filter(poster => poster.id !== posterId);
-    setBookedPosters(updatedPosters);
-    localStorage.setItem('bookedPosters', JSON.stringify(updatedPosters));
-    // Вызываем кастомное событие для обновления всех компонентов
-    window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: updatedPosters }));
-  };
-
-  const editBookedPoster = (posterId: string, updatedPoster: Partial<BookedPoster>) => {
-    const updatedPosters = bookedPosters.map(poster => 
-      poster.id === posterId 
-        ? { ...poster, ...updatedPoster }
-        : poster
+    const updatedPosters = bookedPosters.filter(
+      (poster) => poster.id !== posterId
     );
     setBookedPosters(updatedPosters);
     localStorage.setItem('bookedPosters', JSON.stringify(updatedPosters));
-    window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: updatedPosters }));
+    // Вызываем кастомное событие для обновления всех компонентов
+    window.dispatchEvent(
+      new CustomEvent(STORAGE_EVENT, { detail: updatedPosters })
+    );
   };
 
-  return { 
-    bookedPosters, 
-    addBookedPoster, 
+  const editBookedPoster = (
+    posterId: string,
+    updatedPoster: Partial<BookedPoster>
+  ) => {
+    const updatedPosters = bookedPosters.map((poster) =>
+      poster.id === posterId ? { ...poster, ...updatedPoster } : poster
+    );
+    setBookedPosters(updatedPosters);
+    localStorage.setItem('bookedPosters', JSON.stringify(updatedPosters));
+    window.dispatchEvent(
+      new CustomEvent(STORAGE_EVENT, { detail: updatedPosters })
+    );
+  };
+
+  return {
+    bookedPosters,
+    addBookedPoster,
     removeBookedPoster,
-    editBookedPoster
+    editBookedPoster,
   };
 }

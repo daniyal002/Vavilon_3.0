@@ -1,6 +1,7 @@
 export interface Theater {
   id: number;
   name: string;
-  location?: string;
-  capacity?: number;
+  type: 'REGULAR' | 'VIP';
+  rows: number;
+  seatsPerRow: number;
 }

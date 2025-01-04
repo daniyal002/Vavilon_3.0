@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { axiosAuth } from '../api/axios';
+import { axiosAuth, axiosClassic } from '../api/axios';
 import {
   PromoCode,
   CreatePromoCodeDTO,
@@ -10,7 +10,7 @@ export const usePromoCodes = () => {
   const queryClient = useQueryClient();
 
   // Получение всех промокодов
-  const promoCodesQuery = useQuery<PromoCode[]>({
+  const promoCodesQuery = () => useQuery<PromoCode[]>({
     queryKey: ['promoCodes'],
     queryFn: async () => {
       const { data } = await axiosAuth.get('/promocodes');
@@ -34,7 +34,7 @@ export const usePromoCodes = () => {
     return useQuery<PromoCode>({
       queryKey: ['promoCode', code],
       queryFn: async () => {
-        const { data } = await axiosAuth.get(`/promocodes/code/${code}`);
+        const { data } = await axiosClassic.get(`/promocodes/code/${code}`);
         return data;
       },
       enabled: options?.enabled ?? !!code,

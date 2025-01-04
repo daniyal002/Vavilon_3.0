@@ -9,6 +9,8 @@ import { baseURL } from '../api/axios';
 import { formatTime } from '../utils/formatters';
 import { useBookings } from '../hooks/useBookings';
 import { useBookedPosters } from '../hooks/useBookedPosters';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast, Toaster } from 'react-hot-toast';
 
 type MovieCardProps = ShowTime;
 
@@ -21,13 +23,14 @@ export function MovieCard(showTime: MovieCardProps) {
   const { deleteBookingMutation } = useBookings();
   const { removeBookedPoster } = useBookedPosters();
   const { mutate: deleteBooking } = deleteBookingMutation;
+  const queryClient = useQueryClient();
 
   const checkBookingStatus = () => {
     const bookedMovies = JSON.parse(
       localStorage.getItem('bookedPosters') || '[]'
     );
     const booking = bookedMovies.find(
-      (booking: any) => booking.id === showTime.id.toString()
+      (booking: BookedPoster) => booking.id === showTime.id.toString()
     );
     setCurrentBooking(booking || null);
   };
@@ -36,16 +39,24 @@ export function MovieCard(showTime: MovieCardProps) {
     checkBookingStatus();
   };
 
-  const handleButtonClick = () => {
+  const handleBookingClick = () => {
+    if (showTime.availableSeats === 0 && !currentBooking) {
+      toast.error('Все места заняты');
+      return;
+    }
     setIsBooking(true);
   };
 
   useEffect(() => {
     checkBookingStatus();
-  }, [showTime.movieId]);
+  }, [showTime.id]);
 
   return (
-    <div className="group bg-purple-950/50 rounded-xl overflow-hidden shadow-lg">
+    <div
+      className="group bg-purple-900/40 rounded-xl overflow-hidden shadow-lg 
+      backdrop-blur-sm border border-purple-500/10 hover:border-purple-500/20 
+      transition-all duration-300"
+    >
       {isBooking ? (
         <BookingForm
           showTime={showTime}
@@ -57,7 +68,7 @@ export function MovieCard(showTime: MovieCardProps) {
         <>
           {/* Poster Section */}
           <div
-            className="relative h-[420px] overflow-hidden cursor-pointer"
+            className="relative h-[380px] overflow-hidden cursor-pointer"
             onClick={() => navigate(`/movies/${showTime.movie.id}`)}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-purple-950 to-transparent opacity-50 z-10" />
@@ -131,6 +142,9 @@ export function MovieCard(showTime: MovieCardProps) {
                           {
                             onSuccess() {
                               removeBookedPoster(currentBooking.id);
+                              queryClient.invalidateQueries({
+                                queryKey: ['showTimes'],
+                              });
                             },
                           }
                         );
@@ -146,11 +160,13 @@ export function MovieCard(showTime: MovieCardProps) {
                 </>
               ) : (
                 <button
-                  onClick={handleButtonClick}
+                  onClick={handleBookingClick}
+                  disabled={showTime.seatsAvailable === 0}
                   className="flex-1 py-3 px-6 rounded-lg font-semibold text-white
                     bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/30 
                     hover:shadow-purple-500/50 transition-all duration-300 
-                    active:scale-95 hover:scale-[1.02]"
+                    active:scale-95 hover:scale-[1.02]
+                    disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Забронировать
                 </button>

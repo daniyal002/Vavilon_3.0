@@ -34,6 +34,22 @@ export function AddShowTimeForm({
     seatsAvailable: '',
   });
 
+  const selectedTheater = theaters.find(
+    (t) => t.id === parseInt(formData.theaterId)
+  );
+
+  const handleTheaterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const theater = theaters.find((t) => t.id === parseInt(e.target.value));
+    setFormData((prev) => ({
+      ...prev,
+      theaterId: e.target.value,
+      seatsAvailable:
+        theater?.type === 'VIP'
+          ? ((theater.rows || 0) * (theater.seatsPerRow || 0)).toString()
+          : prev.seatsAvailable,
+    }));
+  };
+
   const handleSubmit = () => {
     if (formData.movieId && formData.theaterId && formData.date) {
       onAdd({
@@ -87,9 +103,7 @@ export function AddShowTimeForm({
           <label className="block text-sm text-purple-300 mb-1">Зал</label>
           <select
             value={formData.theaterId}
-            onChange={(e) =>
-              setFormData({ ...formData, theaterId: e.target.value })
-            }
+            onChange={handleTheaterChange}
             className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
               text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
           >
@@ -170,9 +184,11 @@ export function AddShowTimeForm({
               onChange={(e) =>
                 setFormData({ ...formData, seatsAvailable: e.target.value })
               }
+              disabled={selectedTheater?.type === 'VIP'}
               placeholder="0"
               className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
-                text-purple-200 placeholder-purple-400 focus:outline-none focus:border-purple-500 text-sm"
+                text-purple-200 placeholder-purple-400 focus:outline-none focus:border-purple-500 text-sm
+                disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </div>

@@ -13,8 +13,9 @@ export function ShowTimesBookingTable() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [expandedShowTime, setExpandedShowTime] = useState<number | null>(null);
 
-  const { showTimesWithBookingsQuery } = useShowTimes();
-  const { data: showTimes, isLoading, isError } = showTimesWithBookingsQuery;
+  const { useShowTimesWithBookings } = useShowTimes();
+  const showTimesQuery = useShowTimesWithBookings();
+  const { data: showTimes, isLoading, isError } = showTimesQuery;
   const { confirmBookingMutation } = useBookings();
 
   if (isLoading) {
@@ -47,8 +48,7 @@ export function ShowTimesBookingTable() {
     e.stopPropagation();
     confirmBookingMutation.mutate(bookingId, {
       onSuccess: () => {
-        // Принудительно обновляем данные сеансов
-        showTimesWithBookingsQuery.refetch();
+        showTimesQuery.refetch();
       },
     });
   };
@@ -171,6 +171,12 @@ export function ShowTimesBookingTable() {
                                     <span>ID: {booking.id}</span>
                                     <span>Телефон: {booking.phone}</span>
                                     <span>Мест: {booking.reservedSeats}</span>
+                                    <span>
+                                      Ряд: {Array.from(new Set(booking.row)).join(
+                                        ', '
+                                      )}
+                                    </span>
+                                    <span>Места: {booking.seatPerRow.sort().join(', ')}</span>
                                     <span>Сумма: {booking.totalAmount} ₽</span>
                                   </div>
                                   <div className="flex items-center gap-3">

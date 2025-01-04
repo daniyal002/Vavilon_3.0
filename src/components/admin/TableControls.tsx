@@ -1,10 +1,11 @@
 import { Search } from 'lucide-react';
 
-interface GenresTableControlsProps {
+interface TableControlsProps {
   searchQuery: string;
-  onSearchChange: (query: string) => void;
+  onSearchChange: (value: string) => void;
   itemsPerPage: number;
   onItemsPerPageChange: (value: number) => void;
+  onAdd?: () => void;
 }
 
 export function TableControls({
@@ -12,7 +13,7 @@ export function TableControls({
   onSearchChange,
   itemsPerPage,
   onItemsPerPageChange,
-}: GenresTableControlsProps) {
+}: TableControlsProps) {
   return (
     <div className="bg-purple-950/50 rounded-xl p-4 md:p-6 shadow-lg space-y-4">
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">

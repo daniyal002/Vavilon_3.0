@@ -10,6 +10,8 @@ export interface Booking {
   reservedSeats: number;
   totalAmount: number;
   confirmation: boolean;
+  row: number[];
+  seatPerRow: number[];
   showTime: ShowTime & {
     movie: Movie;
     theater: Theater;
@@ -21,6 +23,8 @@ export interface CreateBookingDTO {
   phone: string;
   reservedSeats: number;
   totalAmount: number;
+  row?: number[];
+  seatPerRow?: number[];
 }
 
 export interface UpdateBookingDTO {
@@ -29,4 +33,6 @@ export interface UpdateBookingDTO {
   reservedSeats?: number;
   totalAmount?: number;
   confirmation?: boolean;
+  row?: number;
+  seatPerRow?: number;
 }

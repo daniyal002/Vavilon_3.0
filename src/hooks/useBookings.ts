@@ -6,13 +6,14 @@ export const useBookings = () => {
   const queryClient = useQueryClient();
 
   // Получение всех бронирований
-  const bookingsQuery = useQuery<Booking[]>({
-    queryKey: ['bookings'],
-    queryFn: async () => {
-      const { data } = await axiosAuth.get('/bookings');
-      return data;
-    },
-  });
+  const useBookingsQuery = () =>
+    useQuery<Booking[]>({
+      queryKey: ['bookings'],
+      queryFn: async () => {
+        const { data } = await axiosAuth.get('/bookings');
+        return data;
+      },
+    });
 
   // Получение бронирований по телефону
   const useBookingsByPhone = (phone: string) => {
@@ -87,7 +88,7 @@ export const useBookings = () => {
   });
 
   return {
-    bookingsQuery,
+    useBookingsQuery,
     useBookingsByPhone,
     useBooking,
     createBookingMutation,
