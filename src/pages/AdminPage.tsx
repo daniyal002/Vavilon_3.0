@@ -10,7 +10,7 @@ import { ProductsTable } from '../components/admin/products/ProductsTable';
 import { ProductCategoriesTable } from '../components/admin/products/ProductCategoriesTable';
 import { UserRolesTable } from '../components/admin/role/UserRolesTable';
 import { UsersTable } from '../components/admin/users/UsersTable';
-import { ShowTimesBookingTable } from '../components/admin/showtimes/ShowTimesBookingTable';
+import { ShowTimesBookingTable } from '../components/admin/showtimes/showTimesBooking/ShowTimesBookingTable';
 
 type AdminTab =
   | 'genres'
@@ -25,7 +25,7 @@ type AdminTab =
   | 'bookings';
 
 export function AdminPage() {
-  const isAuthenticated  = getAccessToken();
+  const isAuthenticated = getAccessToken();
   const [activeTab, setActiveTab] = useState<AdminTab>('genres');
 
   if (!isAuthenticated) {

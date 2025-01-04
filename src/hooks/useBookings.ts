@@ -77,6 +77,15 @@ export const useBookings = () => {
     },
   });
 
+  const deleteBookingByIdMutation = useMutation({
+    mutationFn: async ({ id }: { id: number }) => {
+      await axiosAuth.delete(`/bookings/delete/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+  });
+
   const confirmBookingMutation = useMutation({
     mutationFn: async (id: number) => {
       const { data } = await axiosAuth.patch(`/bookings/${id}/confirm`);
@@ -95,5 +104,6 @@ export const useBookings = () => {
     updateBookingMutation,
     deleteBookingMutation,
     confirmBookingMutation,
+    deleteBookingByIdMutation,
   };
 };

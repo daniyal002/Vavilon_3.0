@@ -1,22 +1,25 @@
 import { useState } from 'react';
-import { useShowTimes } from '../../../hooks/useShowTimes';
+import { useShowTimes } from '../../../../hooks/useShowTimes';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { TableControls } from '../TableControls';
-import { Pagination } from '../Pagination';
-import { ShowTime } from '../../../types/showtime';
-import { useBookings } from '../../../hooks/useBookings';
+import { TableControls } from '../../TableControls';
+import { Pagination } from '../../Pagination';
+import { ShowTime } from '../../../../types/showtime';
+import { useBookings } from '../../../../hooks/useBookings';
+import { AddShowTimeBookingForm } from './AddShowTimeBookingForm';
 
 export function ShowTimesBookingTable() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [expandedShowTime, setExpandedShowTime] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'current' | 'archive'>('current');
+  const [dateFilter, setDateFilter] = useState('');
 
   const { useShowTimesWithBookings } = useShowTimes();
   const showTimesQuery = useShowTimesWithBookings();
   const { data: showTimes, isLoading, isError } = showTimesQuery;
-  const { confirmBookingMutation } = useBookings();
+  const { confirmBookingMutation, deleteBookingByIdMutation } = useBookings();
 
   if (isLoading) {
     return <div className="text-purple-200">Загрузка...</div>;
@@ -26,15 +29,28 @@ export function ShowTimesBookingTable() {
     return <div className="text-red-400">Ошибка загрузки данных</div>;
   }
 
-  // Фильтрация и пагинация
+  const currentTime = new Date();
+
   const filteredShowTimes =
-    showTimes?.filter(
-      (showTime: ShowTime) =>
+    showTimes?.filter((showTime: ShowTime) => {
+      const isArchived = new Date(showTime.endTime) < currentTime;
+      const matchesSearch =
         showTime.movie.title
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        showTime.theater.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+        showTime.theater.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesDate = dateFilter
+        ? format(new Date(showTime.startTime), 'yyyy-MM-dd') === dateFilter
+        : true;
+
+      return (
+        matchesSearch &&
+        matchesDate &&
+        ((activeTab === 'current' && !isArchived) ||
+          (activeTab === 'archive' && isArchived))
+      );
+    }) || [];
 
   const totalPages = Math.ceil(filteredShowTimes.length / itemsPerPage);
   const start = (currentPage - 1) * itemsPerPage;
@@ -53,8 +69,72 @@ export function ShowTimesBookingTable() {
     });
   };
 
+  const handleDelete = (e: React.MouseEvent, bookingId: number) => {
+    e.stopPropagation();
+    if (window.confirm('Вы уверены, что хотите удалить эту бронь?')) {
+      deleteBookingByIdMutation.mutate(
+        { id: bookingId },
+        {
+          onSuccess: () => {
+            showTimesQuery.refetch();
+          },
+        }
+      );
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <AddShowTimeBookingForm
+        onSuccess={() => {
+          showTimesQuery.refetch();
+        }}
+      />
+
+      <div className="flex flex-wrap gap-4 mb-4">
+        <div className="flex gap-4">
+          <button
+            onClick={() => setActiveTab('current')}
+            className={`px-4 py-2 rounded-lg ${
+              activeTab === 'current'
+                ? 'bg-purple-600/80 text-white'
+                : 'bg-purple-900/50 text-purple-300'
+            }`}
+          >
+            Текущие сеансы
+          </button>
+          <button
+            onClick={() => setActiveTab('archive')}
+            className={`px-4 py-2 rounded-lg ${
+              activeTab === 'archive'
+                ? 'bg-purple-600/80 text-white'
+                : 'bg-purple-900/50 text-purple-300'
+            }`}
+          >
+            Архив
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+              text-purple-200 focus:outline-none focus:border-purple-500"
+          />
+          {dateFilter && (
+            <button
+              onClick={() => setDateFilter('')}
+              className="p-2 bg-purple-900/50 rounded-lg text-purple-300 
+                hover:bg-purple-800/50 transition-colors"
+            >
+              Сбросить
+            </button>
+          )}
+        </div>
+      </div>
+
       <TableControls
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -172,11 +252,15 @@ export function ShowTimesBookingTable() {
                                     <span>Телефон: {booking.phone}</span>
                                     <span>Мест: {booking.reservedSeats}</span>
                                     <span>
-                                      Ряд: {Array.from(new Set(booking.row)).join(
+                                      Ряд:{' '}
+                                      {Array.from(new Set(booking.row)).join(
                                         ', '
                                       )}
                                     </span>
-                                    <span>Места: {booking.seatPerRow.sort().join(', ')}</span>
+                                    <span>
+                                      Места:{' '}
+                                      {booking.seatPerRow.sort().join(', ')}
+                                    </span>
                                     <span>Сумма: {booking.totalAmount} ₽</span>
                                   </div>
                                   <div className="flex items-center gap-3">
@@ -209,6 +293,21 @@ export function ShowTimesBookingTable() {
                                           : 'Подтвердить'}
                                       </button>
                                     )}
+                                    <button
+                                      onClick={(e) =>
+                                        handleDelete(e, booking.id)
+                                      }
+                                      disabled={
+                                        deleteBookingByIdMutation.isPending
+                                      }
+                                      className="px-3 py-1 bg-red-600/50 rounded-full text-xs
+                                        text-red-200 hover:bg-red-600/70 transition-colors
+                                        disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                      {deleteBookingByIdMutation.isPending
+                                        ? 'Удаление...'
+                                        : 'Удалить'}
+                                    </button>
                                   </div>
                                 </div>
                               ))}
