@@ -27,11 +27,13 @@ export function PromoCodesTable() {
     deletePromoCodeMutation,
   } = usePromoCodes();
 
+  const {data:promoCodeData, isLoading, isError} = promoCodesQuery()
+
   const filteredAndPaginatedData = useMemo(() => {
-    if (!promoCodesQuery.data)
+    if (!promoCodeData)
       return { promoCodes: [], totalPages: 0, totalItems: 0 };
 
-    const filtered = promoCodesQuery.data.filter(
+    const filtered = promoCodeData.filter(
       (promoCode) =>
         promoCode.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
         promoCode.type.toLowerCase().includes(searchQuery.toLowerCase())
@@ -46,7 +48,7 @@ export function PromoCodesTable() {
       totalPages,
       totalItems: filtered.length,
     };
-  }, [promoCodesQuery.data, searchQuery, currentPage, itemsPerPage]);
+  }, [promoCodeData, searchQuery, currentPage, itemsPerPage]);
 
   const handleEdit = (promoCode: any) => {
     setEditingId(promoCode.id);
@@ -68,11 +70,11 @@ export function PromoCodesTable() {
     setEditingId(null);
   };
 
-  if (promoCodesQuery.isLoading) {
+  if (isLoading) {
     return <div className="text-purple-200">Загрузка...</div>;
   }
 
-  if (promoCodesQuery.isError) {
+  if (isError) {
     return <div className="text-red-400">Ошибка загрузки данных</div>;
   }
 

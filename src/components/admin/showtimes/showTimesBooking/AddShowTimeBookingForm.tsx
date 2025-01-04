@@ -42,7 +42,7 @@ export function AddShowTimeBookingForm({
     createBookingMutation.mutate(
       {
         showTimeId: selectedShowTime.id,
-        phone,
+        phone:phone.replace(/\D/g, ''),
         reservedSeats: isVIP ? selectedSeats.length : seats,
         row: isVIP ? selectedSeats.map((s) => s.row) : undefined,
         seatPerRow: isVIP ? selectedSeats.map((s) => s.seat) : undefined,

@@ -54,7 +54,7 @@ export function MovieCard(showTime: MovieCardProps) {
   return (
     <div
       className="group bg-purple-900/40 rounded-xl overflow-hidden shadow-lg 
-      backdrop-blur-sm border border-purple-500/10 hover:border-purple-500/20 
+      border border-purple-500/10 hover:border-purple-500/20 
       transition-all duration-300"
     >
       {isBooking ? (
@@ -71,8 +71,8 @@ export function MovieCard(showTime: MovieCardProps) {
             className="relative h-[380px] overflow-hidden cursor-pointer"
             onClick={() => navigate(`/movies/${showTime.movie.id}`)}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-purple-950 to-transparent opacity-50 z-10" />
-            <div className="absolute top-2 right-2 z-20">
+            <div className="absolute inset-0 bg-gradient-to-t from-purple-950 to-transparent opacity-50" />
+            <div className="absolute top-2 right-2 z-20 flex flex-col gap-2">
               <span
                 className="px-2 py-1 bg-yellow-500/80 rounded-md text-sm font-semibold
                 transform transition-transform duration-300 hover:scale-110 hover:bg-yellow-500
@@ -80,12 +80,22 @@ export function MovieCard(showTime: MovieCardProps) {
               >
                 ★ {showTime.movie.rating}
               </span>
+              {showTime.theater.type === 'VIP' && (
+                <span
+                  className="px-2 py-1 bg-gradient-to-r from-amber-500 to-yellow-500 
+                  rounded-md text-sm font-semibold text-white
+                  transform transition-transform duration-300 hover:scale-110
+                  shadow-lg shadow-amber-500/20 text-center"
+                >
+                  VIP
+                </span>
+              )}
             </div>
             <div className="absolute bottom-2 left-2 z-20">
               <span
                 className="px-2 py-1 bg-purple-900/80 rounded-md text-sm font-semibold
                 transform transition-all duration-300 hover:scale-110 hover:bg-purple-900
-                hover:shadow-lg"
+                hover:shadow-lg text-white"
               >
                 {showTime.movie.ageRestriction}
               </span>

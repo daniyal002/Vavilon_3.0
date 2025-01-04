@@ -166,7 +166,7 @@ export function UsersTable() {
                               updateUserMutation.mutate({
                                 id: user.id,
                                 userData: {
-                                  phone: editingData.phone,
+                                  phone: editingData.phone.replace(/\D/g, ''),
                                   roleId: parseInt(editingData.roleId),
                                   ...(editingData.password && {
                                     password: editingData.password,
@@ -200,7 +200,7 @@ export function UsersTable() {
                             onClick={() => {
                               setEditingId(user.id);
                               setEditingData({
-                                phone: user.phone,
+                                phone: user.phone.replace(/\D/g, ''),
                                 password: '',
                                 roleId: user.roleId.toString(),
                               });

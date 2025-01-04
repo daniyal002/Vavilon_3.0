@@ -11,6 +11,7 @@ import { ProductCategoriesTable } from '../components/admin/products/ProductCate
 import { UserRolesTable } from '../components/admin/role/UserRolesTable';
 import { UsersTable } from '../components/admin/users/UsersTable';
 import { ShowTimesBookingTable } from '../components/admin/showtimes/showTimesBooking/ShowTimesBookingTable';
+import { Menu, X } from 'lucide-react';
 
 type AdminTab =
   | 'genres'
@@ -27,235 +28,155 @@ type AdminTab =
 export function AdminPage() {
   const isAuthenticated = getAccessToken();
   const [activeTab, setActiveTab] = useState<AdminTab>('genres');
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   if (!isAuthenticated) {
     return <LoginPage />;
   }
 
-  return (
-    <div className="container mx-auto p-4">
-      <h1
-        className="text-xl md:text-2xl font-bold mb-6 text-transparent bg-clip-text 
-        bg-gradient-to-r from-purple-400 to-pink-400"
-      >
-        Админ-панель
-      </h1>
+  const navigationButtons = [
+    { id: 'genres', label: 'Управление жанрами' },
+    { id: 'theaters', label: 'Управление залами' },
+    { id: 'movies', label: 'Управление фильмами' },
+    { id: 'showtimes', label: 'Управление сеансами' },
+    { id: 'promocodes', label: 'Управление промокодами' },
+    { id: 'products', label: 'Управление продуктами' },
+    { id: 'productCategories', label: 'Управление категориями продуктов' },
+    { id: 'users', label: 'Управление пользователями' },
+    { id: 'userRoles', label: 'Управление ролями пользователей' },
+    { id: 'bookings', label: 'Управление бронированиями' },
+  ];
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => setActiveTab('genres')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'genres'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление жанрами
-        </button>
-        <button
-          onClick={() => setActiveTab('theaters')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'theaters'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление залами
-        </button>
-        <button
-          onClick={() => setActiveTab('movies')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'movies'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление фильмами
-        </button>
-        <button
-          onClick={() => setActiveTab('showtimes')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'showtimes'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление сеансами
-        </button>
-        <button
-          onClick={() => setActiveTab('promocodes')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'promocodes'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление промокодами
-        </button>
-        <button
-          onClick={() => setActiveTab('products')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'products'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление продуктами
-        </button>
-        <button
-          onClick={() => setActiveTab('productCategories')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'productCategories'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление категориями продуктов
-        </button>
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'users'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление пользователями
-        </button>
-        <button
-          onClick={() => setActiveTab('userRoles')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'userRoles'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление ролями пользователей
-        </button>
-        <button
-          onClick={() => setActiveTab('bookings')}
-          className={`px-4 py-2 rounded-lg transition-all duration-200 text-sm md:text-base
-            ${
-              activeTab === 'bookings'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
-            }`}
-        >
-          Управление бронированиями
-        </button>
+  return (
+    <div className="relative min-h-screen md:flex">
+      {/* Кнопка открытия сайдбара на мобильных */}
+      <button
+        onClick={() => setSidebarOpen(!isSidebarOpen)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-purple-900/50 rounded-lg text-purple-400"
+      >
+        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Затемнение фона */}
+      {isSidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Сайдбар */}
+      <div
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-purple-950/80 backdrop-blur-xl 
+          border-r border-purple-500/10 transform transition-transform duration-300 z-50
+          overflow-y-auto md:overflow-y-visible
+          ${
+            isSidebarOpen
+              ? 'translate-x-0'
+              : '-translate-x-full md:translate-x-0'
+          }`}
+      >
+        <div className="p-4 pt-16 md:pt-4">
+          <h1 className="text-xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            Админ-панель
+          </h1>
+          <nav className="space-y-2 pb-4">
+            {navigationButtons.map((button) => (
+              <button
+                key={button.id}
+                onClick={() => {
+                  setActiveTab(button.id as AdminTab);
+                  setSidebarOpen(false);
+                }}
+                className={`w-full px-4 py-2 rounded-lg transition-all duration-200 text-left text-sm
+                  ${
+                    activeTab === button.id
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
+                      : 'text-purple-200 hover:bg-purple-900/50'
+                  }`}
+              >
+                {button.label}
+              </button>
+            ))}
+          </nav>
+        </div>
       </div>
 
-      <div className="space-y-6">
-        {activeTab === 'genres' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление жанрами
-            </h2>
-            <GenresTable />
-          </>
-        ) : activeTab === 'theaters' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление залами
-            </h2>
-            <TheatersTable />
-          </>
-        ) : activeTab === 'movies' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление фильмами
-            </h2>
-            <MoviesTable />
-          </>
-        ) : activeTab === 'showtimes' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление сеансами
-            </h2>
-            <ShowTimesTable />
-          </>
-        ) : activeTab === 'promocodes' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление промокодами
-            </h2>
-            <PromoCodesTable />
-          </>
-        ) : activeTab === 'products' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление продуктами
-            </h2>
-            <ProductsTable />
-          </>
-        ) : activeTab === 'productCategories' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление категориями продуктов
-            </h2>
-            <ProductCategoriesTable />
-          </>
-        ) : activeTab === 'users' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление пользователями
-            </h2>
-            <UsersTable />
-          </>
-        ) : activeTab === 'userRoles' ? (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление ролями пользователей
-            </h2>
-            <UserRolesTable />
-          </>
-        ) : (
-          <>
-            <h2
-              className="text-lg md:text-xl font-semibold text-transparent bg-clip-text 
-              bg-gradient-to-r from-purple-400 to-pink-400"
-            >
-              Управление бронированиями
-            </h2>
-            <ShowTimesBookingTable />
-          </>
-        )}
+      {/* Основной контент */}
+      <div className="flex-1 p-4">
+        <div className="space-y-6">
+          {activeTab === 'genres' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление жанрами
+              </h2>
+              <GenresTable />
+            </>
+          ) : activeTab === 'theaters' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление залами
+              </h2>
+              <TheatersTable />
+            </>
+          ) : activeTab === 'movies' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление фильмами
+              </h2>
+              <MoviesTable />
+            </>
+          ) : activeTab === 'showtimes' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление сеансами
+              </h2>
+              <ShowTimesTable />
+            </>
+          ) : activeTab === 'promocodes' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление промокодами
+              </h2>
+              <PromoCodesTable />
+            </>
+          ) : activeTab === 'products' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление продуктами
+              </h2>
+              <ProductsTable />
+            </>
+          ) : activeTab === 'productCategories' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление категориями продуктов
+              </h2>
+              <ProductCategoriesTable />
+            </>
+          ) : activeTab === 'users' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление пользователями
+              </h2>
+              <UsersTable />
+            </>
+          ) : activeTab === 'userRoles' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление ролями пользователей
+              </h2>
+              <UserRolesTable />
+            </>
+          ) : (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление бронированиями
+              </h2>
+              <ShowTimesBookingTable />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

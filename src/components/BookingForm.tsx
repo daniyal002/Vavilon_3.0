@@ -70,7 +70,7 @@ export function BookingForm({
     createBooking(
       {
         showTimeId: showTime.id,
-        phone: phoneNumber,
+        phone: phoneNumber.replace(/\D/g, ''),
         reservedSeats:
           showTime.theater.type === 'VIP' ? selectedSeats.length : seats,
         totalAmount: totalPrice,
@@ -89,7 +89,7 @@ export function BookingForm({
             id: showTime.id.toString(),
             title: showTime.movie.title,
             imageUrl: showTime.movie.imagePath as string,
-            phoneNumber: phoneNumber,
+            phoneNumber: phoneNumber.replace(/\D/g, ''),
             seats:
               showTime.theater.type === 'VIP' ? selectedSeats.length : seats,
             totalPrice: totalPrice,

@@ -10,13 +10,14 @@ export const usePromoCodes = () => {
   const queryClient = useQueryClient();
 
   // Получение всех промокодов
-  const promoCodesQuery = () => useQuery<PromoCode[]>({
+  const promoCodesQuery = () => {
+    return useQuery<PromoCode[]>({
     queryKey: ['promoCodes'],
     queryFn: async () => {
       const { data } = await axiosAuth.get('/promocodes');
       return data;
     },
-  });
+  });}
 
   // Получение промокода по ID
   const usePromoCode = (id: number) => {

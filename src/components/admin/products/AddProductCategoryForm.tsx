@@ -24,7 +24,7 @@ export function AddProductCategoryForm({
       <h3 className="text-base font-semibold text-purple-200 mb-4">
         Добавить новую категорию
       </h3>
-      <div className="flex gap-4">
+      <div className="flex gap-4 flex-col md:flex-row">
         <input
           type="text"
           value={name}
