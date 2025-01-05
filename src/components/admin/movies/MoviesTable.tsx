@@ -3,9 +3,10 @@ import { useMovies } from '../../../hooks/useMovies';
 import { AddMovieForm } from './AddMovieForm';
 import { TableControls } from '../TableControls';
 import { Pagination } from '../Pagination';
-import { Pencil, Trash2, Save, X } from 'lucide-react';
+import { Pencil, Trash2, Save, X, Copy } from 'lucide-react';
 import { useGenres } from '../../../hooks/useGenres';
 import { baseURL } from '../../../api/axios';
+import { Movie } from '../../../types/movie';
 
 export function MoviesTable() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -23,6 +24,7 @@ export function MoviesTable() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [copyData, setCopyData] = useState<Movie | null>(null);
 
   const {
     useMoviesQuery,
@@ -79,6 +81,20 @@ export function MoviesTable() {
     }
   };
 
+  const handleCopy = (movie: any) => {
+    setCopyData({
+      title: movie.title,
+      description: movie.description,
+      rating: movie.rating,
+      year: movie.year,
+      ageRestriction: movie.ageRestriction,
+      trailerLink: movie.trailerLink,
+      premiere: movie.premiere,
+      genreIds: movie.genres.map((g: any) => g.id),
+      image: undefined,
+    });
+  };
+
   if (moviesQuery.isLoading) {
     return <div className="text-purple-200">Загрузка...</div>;
   }
@@ -92,6 +108,8 @@ export function MoviesTable() {
       <AddMovieForm
         onAdd={createMovieMutation.mutate}
         isLoading={createMovieMutation.isPending}
+        initialData={copyData}
+        onCopyComplete={() => setCopyData(null)}
       />
 
       <TableControls
@@ -114,6 +132,9 @@ export function MoviesTable() {
                 </th>
                 <th className="px-3 md:px-6 py-4 text-left text-xs md:text-sm font-semibold text-purple-200">
                   Название
+                </th>
+                <th className="px-3 md:px-6 py-4 text-left text-xs md:text-sm font-semibold text-purple-200">
+                  Описание
                 </th>
                 <th className="px-3 md:px-6 py-4 text-left text-xs md:text-sm font-semibold text-purple-200">
                   Рейтинг
@@ -201,6 +222,49 @@ export function MoviesTable() {
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4">
                     {editingId === movie.id ? (
+                      <div className="relative group">
+                        <textarea
+                          value={editingData.description}
+                          onChange={(e) =>
+                            setEditingData({
+                              ...editingData,
+                              description: e.target.value,
+                            })
+                          }
+                          rows={4}
+                          className="w-full p-3 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                            text-purple-200 focus:outline-none focus:border-purple-500 text-sm
+                            scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-purple-900/30 
+                            hover:scrollbar-thumb-purple-500 hover:bg-purple-900/70 transition-colors"
+                          placeholder="Введите описание фильма..."
+                        />
+                        <div
+                          className="absolute bottom-2 right-3 text-xs text-purple-400/80 
+                          bg-purple-950/80 px-2 py-0.5 rounded-md"
+                        >
+                          {editingData.description.length}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="group relative max-w-md">
+                        <div
+                          className="text-purple-200 text-sm line-clamp-2 group-hover:line-clamp-none 
+                          transition-all duration-200"
+                        >
+                          {movie.description}
+                        </div>
+                        <div
+                          className="absolute bottom-0 right-0 text-xs text-purple-400/80 
+                          bg-purple-950/80 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 
+                          transition-opacity"
+                        >
+                          {movie.description.length}
+                        </div>
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-3 md:px-6 py-3 md:py-4">
+                    {editingId === movie.id ? (
                       <input
                         type="number"
                         value={editingData.rating}
@@ -264,31 +328,51 @@ export function MoviesTable() {
                   </td>
                   <td className="px-3 md:px-6 py-3 md:py-4">
                     {editingId === movie.id ? (
-                      <select
-                        multiple
-                        value={editingData.genreIds.map(String)}
-                        onChange={(e) => {
-                          const values = Array.from(
-                            e.target.selectedOptions,
-                            (option) => parseInt(option.value)
-                          );
-                          setEditingData({ ...editingData, genreIds: values });
-                        }}
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
-                          text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
+                      <div
+                        className="max-h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-600 
+                        scrollbar-track-purple-900/30 hover:scrollbar-thumb-purple-500"
                       >
-                        {genresQuery.data?.map((genre) => (
-                          <option key={genre.id} value={genre.id}>
-                            {genre.name}
-                          </option>
-                        ))}
-                      </select>
+                        <div className="flex flex-wrap gap-1.5 p-2 bg-purple-900/30 rounded-lg">
+                          {genresQuery.data?.map((genre) => (
+                            <label
+                              key={genre.id}
+                              className={`px-2 py-1 rounded text-xs cursor-pointer select-none
+                                transition-colors duration-200
+                                ${
+                                  editingData.genreIds.includes(genre.id)
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-purple-900/50 text-purple-200 hover:bg-purple-800/50'
+                                }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={editingData.genreIds.includes(
+                                  genre.id
+                                )}
+                                onChange={(e) => {
+                                  const newGenreIds = e.target.checked
+                                    ? [...editingData.genreIds, genre.id]
+                                    : editingData.genreIds.filter(
+                                        (id) => id !== genre.id
+                                      );
+                                  setEditingData({
+                                    ...editingData,
+                                    genreIds: newGenreIds,
+                                  });
+                                }}
+                                className="hidden"
+                              />
+                              {genre.name}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {movie.genres?.map((genre) => (
                           <span
                             key={genre.id}
-                            className="px-2 py-1 bg-purple-900/50 rounded-lg text-purple-200 text-xs"
+                            className="px-2 py-1 bg-purple-900/50 rounded text-purple-200 text-xs"
                           >
                             {genre.name}
                           </span>
@@ -342,6 +426,14 @@ export function MoviesTable() {
                           >
                             <Trash2 size={16} />
                             <span className="hidden md:inline">Удалить</span>
+                          </button>
+                          <button
+                            onClick={() => handleCopy(movie)}
+                            className="p-1.5 md:p-2 bg-blue-600/80 rounded-lg text-white 
+                              hover:bg-blue-500 transition-colors flex items-center gap-1"
+                          >
+                            <Copy size={16} />
+                            <span className="hidden md:inline">Копировать</span>
                           </button>
                         </>
                       )}

@@ -1,34 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { useGenres } from '../../../hooks/useGenres';
+import { Movie } from '../../../types/movie';
 
 interface AddMovieFormProps {
-  onAdd: (movieData: {
-    title: string;
-    description: string;
-    rating: number;
-    year: number;
-    ageRestriction: string;
-    trailerLink: string;
-    premiere: boolean;
-    genreIds: number[];
-    image?: File;
-  }) => void;
+  onAdd: (data: any) => void;
   isLoading: boolean;
+  initialData?: Movie | null;
+  onCopyComplete?: () => void;
 }
 
-export function AddMovieForm({ onAdd, isLoading }: AddMovieFormProps) {
+export function AddMovieForm({
+  onAdd,
+  isLoading,
+  initialData,
+  onCopyComplete,
+}: AddMovieFormProps) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     rating: '',
-    year: new Date().getFullYear().toString(),
+    year: '',
     ageRestriction: '',
     trailerLink: '',
     premiere: false,
     genreIds: [] as number[],
+    image: null as File | null,
   });
-  const [image, setImage] = useState<File | null>(null);
+
+  // Устанавливаем начальные данные при копировании
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        title: initialData.title,
+        description: initialData.description,
+        rating: initialData.rating.toString(),
+        year: initialData.year.toString(),
+        ageRestriction: initialData.ageRestriction,
+        trailerLink: initialData.trailerLink,
+        premiere: initialData.premiere,
+        genreIds: initialData.genreIds,
+        image: null,
+      });
+      onCopyComplete?.();
+    }
+  }, [initialData, onCopyComplete]);
+
   const { genresQuery } = useGenres();
 
   const handleSubmit = () => {
@@ -37,19 +54,19 @@ export function AddMovieForm({ onAdd, isLoading }: AddMovieFormProps) {
         ...formData,
         rating: parseFloat(formData.rating) || 0,
         year: parseInt(formData.year),
-        image: image || undefined,
+        image: formData.image || undefined,
       });
       setFormData({
         title: '',
         description: '',
         rating: '',
-        year: new Date().getFullYear().toString(),
+        year: '',
         ageRestriction: '',
         trailerLink: '',
         premiere: false,
         genreIds: [],
+        image: null,
       });
-      setImage(null);
     }
   };
 
@@ -192,7 +209,9 @@ export function AddMovieForm({ onAdd, isLoading }: AddMovieFormProps) {
           </label>
           <input
             type="file"
-            onChange={(e) => setImage(e.target.files?.[0] || null)}
+            onChange={(e) =>
+              setFormData({ ...formData, image: e.target.files?.[0] || null })
+            }
             accept="image/*"
             className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
               text-purple-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0

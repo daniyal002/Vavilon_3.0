@@ -1,21 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Movie } from '../../../types/movie';
 import { Theater } from '../../../types/theater';
-
+import { ShowTime } from '../../../types/showtime';
+import { format } from 'date-fns';
+type ShowTimeCopy = Pick<
+  ShowTime,
+  | 'movieId'
+  | 'theaterId'
+  | 'startTime'
+  | 'endTime'
+  | 'price'
+  | 'date'
+  | 'seatsAvailable'
+>;
 interface AddShowTimeFormProps {
-  onAdd: (showTimeData: {
-    movieId: number;
-    theaterId: number;
-    startTime: string;
-    endTime: string;
-    price: number;
-    date: string;
-    seatsAvailable: number;
-  }) => void;
+  onAdd: (data: any) => void;
   isLoading: boolean;
   movies: Movie[];
   theaters: Theater[];
+  initialData?: ShowTimeCopy | null;
+  onCopyComplete?: () => void;
 }
 
 export function AddShowTimeForm({
@@ -23,6 +28,8 @@ export function AddShowTimeForm({
   isLoading,
   movies,
   theaters,
+  initialData,
+  onCopyComplete,
 }: AddShowTimeFormProps) {
   const [formData, setFormData] = useState({
     movieId: '',
@@ -33,6 +40,21 @@ export function AddShowTimeForm({
     date: '',
     seatsAvailable: '',
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        movieId: initialData.movieId.toString(),
+        theaterId: initialData.theaterId.toString(),
+        startTime: format(new Date(initialData.startTime), 'HH:mm'),
+        endTime: format(new Date(initialData.endTime), 'HH:mm'),
+        price: initialData.price.toString(),
+        date: format(new Date(initialData.date), 'yyyy-MM-dd'),
+        seatsAvailable: initialData.seatsAvailable.toString(),
+      });
+      onCopyComplete?.();
+    }
+  }, [initialData, onCopyComplete]);
 
   const selectedTheater = theaters.find(
     (t) => t.id === parseInt(formData.theaterId)

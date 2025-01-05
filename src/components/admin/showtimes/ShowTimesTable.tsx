@@ -2,12 +2,24 @@ import { useState, useMemo } from 'react';
 import { useShowTimes } from '../../../hooks/useShowTimes';
 import { TableControls } from '../TableControls';
 import { Pagination } from '../Pagination';
-import { Pencil, Trash2, Save, X } from 'lucide-react';
+import { Pencil, Trash2, Save, X, Copy } from 'lucide-react';
 import { useMovies } from '../../../hooks/useMovies';
 import { useTheaters } from '../../../hooks/useTheaters';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { AddShowTimeForm } from './AddShowTimeForm';
+import { ShowTime } from '../../../types/showtime';
+
+type ShowTimeCopy = Pick<
+  ShowTime,
+  | 'movieId'
+  | 'theaterId'
+  | 'startTime'
+  | 'endTime'
+  | 'price'
+  | 'date'
+  | 'seatsAvailable'
+>;
 
 export function ShowTimesTable() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -32,10 +44,12 @@ export function ShowTimesTable() {
     deleteShowTimeMutation,
   } = useShowTimes();
 
-  const  {useMoviesQuery}  = useMovies();
-  const moviesQuery = useMoviesQuery()
+  const { useMoviesQuery } = useMovies();
+  const moviesQuery = useMoviesQuery();
 
   const { theatersQuery } = useTheaters();
+
+  const [copyData, setCopyData] = useState<ShowTimeCopy | null>(null);
 
   const filteredAndPaginatedData = useMemo(() => {
     if (!showTimesQuery.data)
@@ -81,6 +95,18 @@ export function ShowTimesTable() {
     setEditingId(null);
   };
 
+  const handleCopy = (showTime: any) => {
+    setCopyData({
+      movieId: showTime.movieId,
+      theaterId: showTime.theaterId,
+      startTime: showTime.startTime,
+      endTime: showTime.endTime,
+      price: showTime.price,
+      date: showTime.date,
+      seatsAvailable: showTime.seatsAvailable,
+    });
+  };
+
   if (showTimesQuery.isLoading) {
     return <div className="text-purple-200">Загрузка...</div>;
   }
@@ -96,6 +122,8 @@ export function ShowTimesTable() {
         isLoading={createShowTimeMutation.isPending}
         movies={moviesQuery.data || []}
         theaters={theatersQuery.data || []}
+        initialData={copyData}
+        onCopyComplete={() => setCopyData(null)}
       />
 
       <TableControls
@@ -335,6 +363,14 @@ export function ShowTimesTable() {
                           >
                             <Trash2 size={16} />
                             <span className="hidden md:inline">Удалить</span>
+                          </button>
+                          <button
+                            onClick={() => handleCopy(showTime)}
+                            className="p-1.5 md:p-2 bg-blue-600/80 rounded-lg text-white 
+                              hover:bg-blue-500 transition-colors flex items-center gap-1"
+                          >
+                            <Copy size={16} />
+                            <span className="hidden md:inline">Копировать</span>
                           </button>
                         </>
                       )}

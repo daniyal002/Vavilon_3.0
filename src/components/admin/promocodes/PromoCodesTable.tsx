@@ -6,6 +6,7 @@ import { Pagination } from '../Pagination';
 import { Pencil, Trash2, Save, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useProducts } from '../../../hooks/useProducts';
 
 export function PromoCodesTable() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -13,6 +14,7 @@ export function PromoCodesTable() {
     code: '',
     type: '',
     value: '',
+    productId: '',
     startDate: '',
     endDate: '',
   });
@@ -27,11 +29,10 @@ export function PromoCodesTable() {
     deletePromoCodeMutation,
   } = usePromoCodes();
 
-  const {data:promoCodeData, isLoading, isError} = promoCodesQuery()
+  const { data: promoCodeData, isLoading, isError } = promoCodesQuery();
 
   const filteredAndPaginatedData = useMemo(() => {
-    if (!promoCodeData)
-      return { promoCodes: [], totalPages: 0, totalItems: 0 };
+    if (!promoCodeData) return { promoCodes: [], totalPages: 0, totalItems: 0 };
 
     const filtered = promoCodeData.filter(
       (promoCode) =>
@@ -50,23 +51,30 @@ export function PromoCodesTable() {
     };
   }, [promoCodeData, searchQuery, currentPage, itemsPerPage]);
 
+  const { productsQuery } = useProducts();
+  const { data: productstData } = productsQuery;
+
   const handleEdit = (promoCode: any) => {
     setEditingId(promoCode.id);
     setEditingData({
       code: promoCode.code,
       type: promoCode.type,
-      value: promoCode.value.toString(),
+      value: promoCode.value?.toString() || '',
+      productId: promoCode.productId?.toString() || '',
       startDate: format(new Date(promoCode.startDate), 'yyyy-MM-dd'),
       endDate: format(new Date(promoCode.endDate), 'yyyy-MM-dd'),
     });
   };
 
   const handleUpdate = (promoCodeId: number) => {
-    updatePromoCodeMutation.mutate({
+    const updatedData = {
       id: promoCodeId,
       ...editingData,
-      value: parseFloat(editingData.value),
-    });
+      value: editingData.value ? parseFloat(editingData.value) : null,
+      productId: editingData.productId ? parseInt(editingData.productId) : null,
+    };
+
+    updatePromoCodeMutation.mutate(updatedData);
     setEditingId(null);
   };
 
@@ -164,6 +172,9 @@ export function PromoCodesTable() {
                   Значение
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-purple-200">
+                  Товар
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-purple-200">
                   Дата начала
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-purple-200">
@@ -197,18 +208,21 @@ export function PromoCodesTable() {
                   </td>
                   <td className="px-6 py-4 text-purple-200">
                     {editingId === promoCode.id ? (
-                      <input
-                        type="text"
-                        value={editingData.type}
-                        onChange={(e) =>
-                          setEditingData({
-                            ...editingData,
-                            type: e.target.value,
-                          })
-                        }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
-                          text-purple-200 focus:outline-none focus:border-purple-500"
-                      />
+                      <select
+                      value={editingData.type}
+                      onChange={(e) =>
+                        setEditingData({
+                          ...editingData,
+                          type: e.target.value,
+                        })
+                      }
+                      className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                       text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
+                    >
+                      <option value="PERCENTAGE">Процент</option>
+                      <option value="FIXED">Фиксированная сумма</option>
+                      <option value="PRODUCT">Товар</option>
+                    </select>
                     ) : (
                       promoCode.type
                     )}
@@ -229,6 +243,30 @@ export function PromoCodesTable() {
                       />
                     ) : (
                       promoCode.value
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-purple-200">
+                    {editingId === promoCode.id ? (
+                      <select
+                        value={editingData.productId}
+                        onChange={(e) =>
+                          setEditingData({
+                            ...editingData,
+                            productId: e.target.value,
+                          })
+                        }
+                        className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                          text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
+                      >
+                        <option value="">-</option>
+                        {productstData?.map((product) => (
+                          <option key={product.id} value={product.id}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      promoCode.product?.name || '-'
                     )}
                   </td>
                   <td className="px-6 py-4 text-purple-200">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useProducts } from '../../../hooks/useProducts';
 
 interface AddPromoCodeFormProps {
   onAdd: (promoCodeData: {
@@ -19,13 +20,18 @@ export function AddPromoCodeForm({ onAdd, isLoading }: AddPromoCodeFormProps) {
     value: '',
     startDate: '',
     endDate: '',
+    productId: '',
   });
 
   const handleSubmit = () => {
-    if (formData.code && formData.type && formData.value) {
+    if (
+      formData.code &&
+      formData.type &&
+      (formData.value || formData.productId)
+    ) {
       onAdd({
         ...formData,
-        value: parseFloat(formData.value),
+        value: formData.productId ? 100 : parseFloat(formData.value),
       });
       setFormData({
         code: '',
@@ -33,9 +39,13 @@ export function AddPromoCodeForm({ onAdd, isLoading }: AddPromoCodeFormProps) {
         value: '',
         startDate: '',
         endDate: '',
+        productId: '',
       });
     }
   };
+
+  const { productsQuery } = useProducts();
+  const { data: productstData } = productsQuery;
 
   return (
     <div className="bg-purple-950/50 rounded-xl p-4 shadow-lg">
@@ -69,25 +79,49 @@ export function AddPromoCodeForm({ onAdd, isLoading }: AddPromoCodeFormProps) {
                 text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
             >
               <option value="">Выберите тип</option>
-              <option value="percent">Процент</option>
-              <option value="fixed">Фиксированная сумма</option>
+              <option value="PERCENTAGE">Процент</option>
+              <option value="FIXED">Фиксированная сумма</option>
+              <option value="PRODUCT">Товар</option>
             </select>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm text-purple-300 mb-1">Значение</label>
-          <input
-            type="number"
-            value={formData.value}
-            onChange={(e) =>
-              setFormData({ ...formData, value: e.target.value })
-            }
-            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+        {formData.type !== 'PRODUCT' && (
+          <div>
+            <label className="block text-sm text-purple-300 mb-1">
+              Значение
+            </label>
+            <input
+              type="number"
+              value={formData.value}
+              onChange={(e) =>
+                setFormData({ ...formData, value: e.target.value })
+              }
+              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
               text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
-            placeholder="Введите значение"
-          />
-        </div>
+              placeholder="Введите значение"
+            />
+          </div>
+        )}
+
+        {formData.type === 'PRODUCT' && (
+          <div>
+            <label className="block text-sm text-purple-300 mb-1">Товар</label>
+            <select
+              value={formData.productId}
+              onChange={(e) =>
+                setFormData({ ...formData, productId: e.target.value })
+              }
+              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
+            >
+              <option value="">Выберите товар</option>
+              {productstData?.map((product) => (
+                <option value={product.id}>{product.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -104,6 +138,7 @@ export function AddPromoCodeForm({ onAdd, isLoading }: AddPromoCodeFormProps) {
                 text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
             />
           </div>
+
           <div>
             <label className="block text-sm text-purple-300 mb-1">
               Дата окончания
@@ -123,7 +158,12 @@ export function AddPromoCodeForm({ onAdd, isLoading }: AddPromoCodeFormProps) {
         <button
           onClick={handleSubmit}
           disabled={
-            !formData.code || !formData.type || !formData.value || isLoading
+            !formData.code ||
+            !formData.type ||
+            (formData.type === 'PRODUCT'
+              ? !formData.productId
+              : !formData.value) ||
+            isLoading
           }
           className="w-full mt-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg 
             font-semibold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 
