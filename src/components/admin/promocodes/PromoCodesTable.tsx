@@ -7,6 +7,8 @@ import { Pencil, Trash2, Save, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useProducts } from '../../../hooks/useProducts';
+import ProductSelect from '../../UI/ProductSelect';
+import { Product } from '../../../types/product';
 
 export function PromoCodesTable() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -209,20 +211,20 @@ export function PromoCodesTable() {
                   <td className="px-6 py-4 text-purple-200">
                     {editingId === promoCode.id ? (
                       <select
-                      value={editingData.type}
-                      onChange={(e) =>
-                        setEditingData({
-                          ...editingData,
-                          type: e.target.value,
-                        })
-                      }
-                      className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        value={editingData.type}
+                        onChange={(e) =>
+                          setEditingData({
+                            ...editingData,
+                            type: e.target.value,
+                          })
+                        }
+                        className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
                        text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
-                    >
-                      <option value="PERCENTAGE">Процент</option>
-                      <option value="FIXED">Фиксированная сумма</option>
-                      <option value="PRODUCT">Товар</option>
-                    </select>
+                      >
+                        <option value="PERCENTAGE">Процент</option>
+                        <option value="FIXED">Фиксированная сумма</option>
+                        <option value="PRODUCT">Товар</option>
+                      </select>
                     ) : (
                       promoCode.type
                     )}
@@ -247,24 +249,32 @@ export function PromoCodesTable() {
                   </td>
                   <td className="px-6 py-4 text-purple-200">
                     {editingId === promoCode.id ? (
-                      <select
-                        value={editingData.productId}
-                        onChange={(e) =>
-                          setEditingData({
-                            ...editingData,
-                            productId: e.target.value,
-                          })
+                      // <select
+                      //   value={editingData.productId}
+                      //   onChange={(e) =>
+                      //     setEditingData({
+                      //       ...editingData,
+                      //       productId: e.target.value,
+                      //     })
+                      //   }
+                      //   className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
+                      //     text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
+                      // >
+                      //   <option value="">-</option>
+                      //   {productstData?.map((product) => (
+                      //     <option key={product.id} value={product.id}>
+                      //       {product.name}
+                      //     </option>
+                      //   ))}
+                      // </select>
+                      <ProductSelect
+                        products={productstData as Product[]}
+                        selectedProductId={editingData.productId}
+                        onChange={(productId) =>
+                          setEditingData({ ...editingData, productId })
                         }
-                        className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
-                          text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
-                      >
-                        <option value="">-</option>
-                        {productstData?.map((product) => (
-                          <option key={product.id} value={product.id}>
-                            {product.name}
-                          </option>
-                        ))}
-                      </select>
+                        isLabel={false}
+                      />
                     ) : (
                       promoCode.product?.name || '-'
                     )}

@@ -4,6 +4,7 @@ import { Movie } from '../../../types/movie';
 import { Theater } from '../../../types/theater';
 import { ShowTime } from '../../../types/showtime';
 import { format } from 'date-fns';
+import MovieSelect from '../../UI/MovieSelect';
 type ShowTimeCopy = Pick<
   ShowTime,
   | 'movieId'
@@ -102,7 +103,7 @@ export function AddShowTimeForm({
       <div className="space-y-4">
         {/* Фильм */}
         <div>
-          <label className="block text-sm text-purple-300 mb-1">Фильм</label>
+          {/* <label className="block text-sm text-purple-300 mb-1">Фильм</label>
           <select
             value={formData.movieId}
             onChange={(e) =>
@@ -117,7 +118,13 @@ export function AddShowTimeForm({
                 {movie.title}
               </option>
             ))}
-          </select>
+          </select> */}
+           <MovieSelect
+        movies={movies}
+        selectedMovieId={formData.movieId}
+        onChange={(movieId) => setFormData({ ...formData, movieId })}
+        isLabel={true}
+      />
         </div>
 
         {/* Зал */}

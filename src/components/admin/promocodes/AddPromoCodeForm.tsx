@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useProducts } from '../../../hooks/useProducts';
+import ProductSelect from '../../UI/ProductSelect';
+import { Product } from '../../../types/product';
 
 interface AddPromoCodeFormProps {
   onAdd: (promoCodeData: {
@@ -106,20 +108,12 @@ export function AddPromoCodeForm({ onAdd, isLoading }: AddPromoCodeFormProps) {
 
         {formData.type === 'PRODUCT' && (
           <div>
-            <label className="block text-sm text-purple-300 mb-1">Товар</label>
-            <select
-              value={formData.productId}
-              onChange={(e) =>
-                setFormData({ ...formData, productId: e.target.value })
-              }
-              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
-                text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
-            >
-              <option value="">Выберите товар</option>
-              {productstData?.map((product) => (
-                <option value={product.id}>{product.name}</option>
-              ))}
-            </select>
+            <ProductSelect
+              products={productsQuery?.data as Product[]}
+              selectedProductId={formData.productId}
+              onChange={(productId) => setFormData({ ...formData, productId })}
+              isLabel={true}
+            />
           </div>
         )}
 
