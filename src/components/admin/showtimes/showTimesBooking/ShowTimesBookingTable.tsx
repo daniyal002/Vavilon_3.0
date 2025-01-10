@@ -261,6 +261,9 @@ export function ShowTimesBookingTable() {
                                       Места:{' '}
                                       {booking.seatPerRow.sort().join(', ')}
                                     </span>
+                                    {booking.product && (
+                                      <span>Подарок: {booking.product.name}</span>
+                                    )}
                                     <span>Сумма: {booking.totalAmount} ₽</span>
                                   </div>
                                   <div className="flex items-center gap-3">

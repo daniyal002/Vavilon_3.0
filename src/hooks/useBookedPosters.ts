@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Product } from '../types/product';
 
 interface BookedPoster {
   id: string;
@@ -14,6 +15,7 @@ interface BookedPoster {
   seatPerRow?: number[];
   theaterType?: string;
   theater?:string;
+  product?:Product;
 }
 
 // Создаем кастомное событие для синхронизации между вкладками

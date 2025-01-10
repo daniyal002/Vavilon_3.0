@@ -10,6 +10,7 @@ import { formatTime } from '../utils/formatters';
 import { useBookings } from '../hooks/useBookings';
 import { usePromoCodes } from '../hooks/usePromoCodes';
 import { SeatSelector } from './booking/SeatSelector';
+import { Product } from '../types/product';
 
 interface BookingFormProps {
   showTime: ShowTime;
@@ -36,6 +37,7 @@ export function BookingForm({
   const [selectedSeats, setSelectedSeats] = useState<
     Array<{ row: number; seat: number }>
   >([]);
+  const [promoCodeProduct, setPromoCodeProduct] = useState<Product>();
 
   const basePrice =
     showTime.price *
@@ -82,6 +84,8 @@ export function BookingForm({
           showTime.theater.type === 'VIP'
             ? selectedSeats.map((s) => s.seat)
             : undefined,
+        productId:promoCodeProduct?.id
+        
       },
       {
         onSuccess: () => {
@@ -105,7 +109,8 @@ export function BookingForm({
                 ? selectedSeats.map((s) => s.seat)
                 : undefined,
             theaterType: showTime.theater.type,
-            theater:showTime.theater.name
+            theater: showTime.theater.name,
+            product:promoCodeProduct
           });
           onSuccess?.();
           onClose?.();
@@ -135,10 +140,15 @@ export function BookingForm({
         return;
       }
 
-      if (data.type === 'percent') {
+      if (data.type === 'PERCENTAGE') {
         setDiscount(data.value / 100);
-      } else if (data.type === 'fixed') {
+        setPromoCodeProduct(undefined);
+      } else if (data.type === 'FIXED') {
         setDiscount(data.value / basePrice);
+        setPromoCodeProduct(undefined);
+      } else {
+        setPromoCodeProduct(data.product);
+        setDiscount(0);
       }
     });
   };
@@ -218,6 +228,13 @@ export function BookingForm({
               {Math.round(discount * 100)}% (-{Math.round(basePrice * discount)}{' '}
               ₽)
             </span>
+          </div>
+        )}
+
+        {promoCodeProduct && (
+          <div className="flex justify-between text-sm">
+            <span className="text-purple-300">Подарок:</span>
+            <span className="text-green-400">{promoCodeProduct.name}</span>
           </div>
         )}
 

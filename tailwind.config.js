@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      screens:{
+        'xs':'350px'
+      },
       animation: {
         gradient: 'gradient 3s linear infinite',
         neonBlink: 'neonBlink 12s infinite',

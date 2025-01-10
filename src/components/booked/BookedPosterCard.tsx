@@ -2,6 +2,7 @@ import { X } from 'lucide-react';
 import { useBookedPosters } from '../../hooks/useBookedPosters';
 import { baseURL } from '../../api/axios';
 import { useBookings } from '../../hooks/useBookings';
+import { Product } from '../../types/product';
 
 interface BookedPosterCardProps {
   id: string;
@@ -15,6 +16,7 @@ interface BookedPosterCardProps {
   row?: number[];
   seatPerRow?: number[];
   theater?:string;
+  product?:Product
 }
 
 export function BookedPosterCard(props: BookedPosterCardProps) {
@@ -61,6 +63,9 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
           )}
           {props.seatPerRow && (
             <p>Место: {props.seatPerRow.sort().join(', ')}</p>
+          )}
+          {props.product && (
+            <p>Подарок: {props.product.name}</p>
           )}
           <p className="text-purple-200 font-semibold">Итого: {props.totalPrice} ₽</p>
         </div>

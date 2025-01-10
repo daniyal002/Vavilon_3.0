@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useBookings } from '../../../../hooks/useBookings';
 import { useShowTimes } from '../../../../hooks/useShowTimes';
-import { format } from 'date-fns';
+import { format, isAfter, isToday, parseISO } from 'date-fns';
 import { SeatSelector } from '../../../booking/SeatSelector';
 import { NumberInput } from '../../../booking/NumberInput';
 import { PhoneInput } from '../../../booking/PhoneInput';
@@ -56,6 +56,14 @@ export function AddShowTimeBookingForm({
     );
   };
 
+  const bookedSeats =
+  selectedShowTime?.bookings?.flatMap((booking) =>
+      booking.row.map((row, index) => ({
+        row,
+        seat: booking.seatPerRow[index],
+      }))
+    ) || [];
+
   return (
     <div className="bg-purple-950/50 rounded-xl p-6 shadow-lg mb-6">
       <h3 className="text-xl font-bold text-purple-200 mb-4">
@@ -78,7 +86,13 @@ export function AddShowTimeBookingForm({
             required
           >
             <option value="">Выберите сеанс</option>
-            {showTimes?.map((showTime) => (
+            {showTimes
+              ?.filter((showTime) => {
+                // Предполагается, что showTime.date и showTime.endTime уже Date объекты
+                return (
+                  isAfter(showTime.endTime, new Date())
+                );
+              }).map((showTime) => (
               <option key={showTime.id} value={showTime.id}>
                 {showTime.movie.title} -{' '}
                 {format(new Date(showTime.startTime), 'dd.MM.yyyy HH:mm')}(
@@ -114,6 +128,7 @@ export function AddShowTimeBookingForm({
                 });
               }}
               maxSeats={maxSeats}
+              bookedSeats={bookedSeats}
             />
           ) : (
             <NumberInput

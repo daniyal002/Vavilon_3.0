@@ -1,4 +1,5 @@
 import { Movie } from './movie';
+import { Product } from './product';
 import { ShowTime } from './showtime';
 import { Theater } from './theater';
 
@@ -16,6 +17,8 @@ export interface Booking {
     movie: Movie;
     theater: Theater;
   };
+  productId?:number;
+  product?:Product
 }
 
 export interface CreateBookingDTO {
@@ -25,6 +28,8 @@ export interface CreateBookingDTO {
   totalAmount: number;
   row?: number[];
   seatPerRow?: number[];
+  productId?:number;
+
 }
 
 export interface UpdateBookingDTO {
@@ -35,4 +40,6 @@ export interface UpdateBookingDTO {
   confirmation?: boolean;
   row?: number;
   seatPerRow?: number;
+  productId?:number;
+
 }

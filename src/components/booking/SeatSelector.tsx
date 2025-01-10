@@ -34,9 +34,9 @@ export function SeatSelector({
         </span>
       </div>
 
-      <div className="relative aspect-square mx-auto">
+      <div className="relative aspect-square mx-auto max-w-[340px]">
         {/* Экран */}
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 md:w-24">
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-32 md:w-24">
           <div className="w-full h-1 bg-purple-500/20 rounded-full" />
           <div className="text-center text-xs text-purple-400 mt-2">
             Экран
@@ -44,10 +44,10 @@ export function SeatSelector({
         </div>
 
         {/* Внешний круг */}
-        <div className="absolute inset-1 border-2 border-purple-500/20 rounded-full" />
+        <div className="absolute inset-2 xs:inset-1 border-2 border-purple-500/20 rounded-full " />
 
         {/* Внутренний круг */}
-        <div className="absolute inset-5 border border-purple-500/10 rounded-full" />
+        <div className="absolute inset-4 xs:inset-5 border border-purple-500/10 rounded-full"  />
 
         {/* Места */}
         <div className="relative inset-0 h-full">
@@ -61,7 +61,7 @@ export function SeatSelector({
               }}
             >
               <div className="flex gap-1 md:gap-1.5 -translate-x-1/2 justify-center items-center">
-                <span className="text-purple-400 text-[10px] md:text-xs w-3 md:w-4 text-right">
+                <span className="xs:block hidden text-purple-400 text-[10px] md:text-xs w-3 md:w-4 text-right">
                   {rowIndex + 1}
                 </span>
                 <div className="flex gap-1 md:gap-1.5">
