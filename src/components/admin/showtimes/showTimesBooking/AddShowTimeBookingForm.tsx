@@ -24,7 +24,7 @@ export function AddShowTimeBookingForm({
   const { showTimesQuery } = useShowTimes();
   const { data: showTimes } = showTimesQuery;
 
-  const selectedShowTime = showTimes?.find(
+  const selectedShowTime = showTimes?.showTimes?.find(
     (st) => st.id === Number(selectedShowTimeId)
   );
   const isVIP = selectedShowTime?.theater.type === 'VIP';
@@ -86,7 +86,7 @@ export function AddShowTimeBookingForm({
             required
           >
             <option value="">Выберите сеанс</option>
-            {showTimes
+            {showTimes?.showTimes
               ?.filter((showTime) => {
                 // Предполагается, что showTime.date и showTime.endTime уже Date объекты
                 return (

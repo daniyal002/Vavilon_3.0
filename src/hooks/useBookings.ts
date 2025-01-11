@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosAuth, axiosClassic } from '../api/axios';
-import { Booking, CreateBookingDTO, UpdateBookingDTO } from '../types/booking';
+import { Booking, BookingSummarysByPhone, CreateBookingDTO, UpdateBookingDTO } from '../types/booking';
 
 export const useBookings = () => {
   const queryClient = useQueryClient();
@@ -96,10 +96,21 @@ export const useBookings = () => {
     },
   });
 
+  const useBookingSummariesByPhone = () => {
+    return useQuery<BookingSummarysByPhone[]>({
+      queryKey: ['summariesByPhone'],
+      queryFn: async () => {
+        const { data } = await axiosAuth.get("/bookings/summaries/summaries");
+        return data;
+      },
+    });
+  }
+
   return {
     useBookingsQuery,
     useBookingsByPhone,
     useBooking,
+    useBookingSummariesByPhone,
     createBookingMutation,
     updateBookingMutation,
     deleteBookingMutation,

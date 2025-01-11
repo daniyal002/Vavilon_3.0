@@ -4,15 +4,15 @@ import { MovieInfo } from './MovieInfo';
 import { MovieGenres } from './MovieGenres';
 import { BookingForm } from './BookingForm';
 import { BookedPoster } from '../types/bookedPoster';
-import { ShowTime } from '../types/showtime';
+import { IMovieCard } from '../types/showtime';
 import { baseURL } from '../api/axios';
 import { formatTime } from '../utils/formatters';
 import { useBookings } from '../hooks/useBookings';
 import { useBookedPosters } from '../hooks/useBookedPosters';
 import { useQueryClient } from '@tanstack/react-query';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
-type MovieCardProps = ShowTime;
+type MovieCardProps = IMovieCard;
 
 export function MovieCard(showTime: MovieCardProps) {
   const [isBooking, setIsBooking] = useState(false);
@@ -30,7 +30,7 @@ export function MovieCard(showTime: MovieCardProps) {
       localStorage.getItem('bookedPosters') || '[]'
     );
     const booking = bookedMovies.find(
-      (booking: BookedPoster) => booking.id === showTime.id.toString()
+      (booking: BookedPoster) => booking.id === showTime?.id.toString()
     );
     setCurrentBooking(booking || null);
   };
@@ -63,6 +63,7 @@ export function MovieCard(showTime: MovieCardProps) {
           onCancel={() => setIsBooking(false)}
           onClose={() => setIsBooking(false)}
           onSuccess={handleBookingSuccess}
+          ENABLE_PROMOCODE={showTime.ENABLE_PROMOCODE}
         />
       ) : (
         <>

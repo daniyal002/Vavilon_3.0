@@ -19,6 +19,7 @@ interface BookingFormProps {
   onClose: () => void;
   editMode?: boolean;
   initialBooking?: BookedPoster;
+  ENABLE_PROMOCODE:boolean
 }
 
 export function BookingForm({
@@ -28,6 +29,7 @@ export function BookingForm({
   onClose,
   editMode = false,
   initialBooking,
+  ENABLE_PROMOCODE
 }: BookingFormProps) {
   const [seats, setSeats] = useState(editMode ? initialBooking?.seats || 1 : 1);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -213,13 +215,15 @@ export function BookingForm({
             max={showTime.availableSeats}
           />
         )}
-
+      {ENABLE_PROMOCODE && (
         <PromoCodeInput
           value={promoCode}
           onChange={setPromoCode}
           onApply={handleApplyPromo}
           error={promoError}
         />
+      )}
+        
 
         {discount > 0 && (
           <div className="flex justify-between text-sm">

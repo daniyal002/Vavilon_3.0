@@ -32,3 +32,12 @@ export interface CreateShowTimeDTO {
 export interface UpdateShowTimeDTO extends Partial<CreateShowTimeDTO> {
   id: number;
 }
+
+export interface ShowTimesResponse {
+  showTimes: ShowTime[];
+  ENABLE_PROMOCODE: boolean;
+}
+
+export interface IMovieCard extends ShowTime{
+  ENABLE_PROMOCODE: boolean;
+}

@@ -43,3 +43,9 @@ export interface UpdateBookingDTO {
   productId?:number;
 
 }
+export interface BookingSummarysByPhone{
+  phone:string,
+  bookingCount:number,
+  totalAmount:number
+}
+

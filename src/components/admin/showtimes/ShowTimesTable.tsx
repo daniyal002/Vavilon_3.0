@@ -180,7 +180,7 @@ export function ShowTimesTable() {
   };
 
   const filteredAndPaginatedData = useMemo(() => {
-    const filtered = showTimesQuery.data?.filter((showTime) =>
+    const filtered = showTimesQuery.data?.showTimes?.filter((showTime) =>
       showTime.movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       showTime.theater.name.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];

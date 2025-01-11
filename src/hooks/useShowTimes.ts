@@ -4,6 +4,7 @@ import {
   ShowTime,
   CreateShowTimeDTO,
   UpdateShowTimeDTO,
+  ShowTimesResponse,
 } from '../types/showtime';
 
 export const useShowTimes = () => {
@@ -13,7 +14,7 @@ export const useShowTimes = () => {
   const showTimesQuery = useQuery({
     queryKey: ['showTimes'],
     queryFn: async () => {
-      const { data } = await axiosClassic.get<ShowTime[]>('/showtimes');
+      const { data } = await axiosClassic.get<ShowTimesResponse>('/showtimes');
       return data;
     },
   });

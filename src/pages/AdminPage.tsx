@@ -12,6 +12,8 @@ import { UserRolesTable } from '../components/admin/role/UserRolesTable';
 import { UsersTable } from '../components/admin/users/UsersTable';
 import { ShowTimesBookingTable } from '../components/admin/showtimes/showTimesBooking/ShowTimesBookingTable';
 import { Menu, X } from 'lucide-react';
+import BookingSummariesTable from '../components/admin/summariesByPhone/BookingSummariesTable';
+import SettingsTable from '../components/admin/settings/SettingsTable';
 
 type AdminTab =
   | 'genres'
@@ -23,7 +25,9 @@ type AdminTab =
   | 'productCategories'
   | 'users'
   | 'userRoles'
-  | 'bookings';
+  | 'bookings'
+  | 'bookingSummaries'
+  | 'settings';
 
 export function AdminPage() {
   const isAuthenticated = getAccessToken();
@@ -45,6 +49,8 @@ export function AdminPage() {
     { id: 'users', label: 'Управление пользователями' },
     { id: 'userRoles', label: 'Управление ролями пользователей' },
     { id: 'bookings', label: 'Управление бронированиями' },
+    { id:'bookingSummaries', label: 'Количество броней'},
+    {id:'settings',label: 'Настройки'}
   ];
 
   return (
@@ -168,13 +174,27 @@ export function AdminPage() {
               </h2>
               <UserRolesTable />
             </>
-          ) : (
+          ) : activeTab === 'bookings' ? (
             <>
               <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                 Управление бронированиями
               </h2>
               <ShowTimesBookingTable />
             </>
+          ) : activeTab === 'bookingSummaries' ? (
+            <>
+            <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+              Количество броней
+            </h2>
+            <BookingSummariesTable />
+          </>
+          ): (
+            <>
+            <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+              Настройки
+            </h2>
+            <SettingsTable />
+          </>
           )}
         </div>
       </div>

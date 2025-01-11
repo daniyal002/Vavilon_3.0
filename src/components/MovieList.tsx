@@ -23,8 +23,9 @@ export function MovieList() {
 
   const currentDate = new Date();
 
+  console.log(showTimesQuery.data?.showTimes)
   // Фильтруем сеансы, которые еще не закончились
-  const activeShowTimes = (showTimesQuery.data || []).filter(
+  const activeShowTimes = (showTimesQuery.data?.showTimes || []).filter(
     (showTime) => new Date(showTime.endTime) > currentDate
   );
 
@@ -119,7 +120,7 @@ export function MovieList() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <Toaster />
         {filteredShowTimes.map((showTime) => (
-          <MovieCard key={showTime.id} {...showTime} />
+          <MovieCard key={showTime.id} {...showTime} ENABLE_PROMOCODE={showTimesQuery.data?.ENABLE_PROMOCODE as boolean}/>
         ))}
       </div>
     </div>
