@@ -4,7 +4,8 @@ import { cn } from '../../utils/cn';
 const navItems = [
   { id: 'movies', label: 'Афиша', path: '/' },
   { id: 'booked', label: 'Мои билеты', path: '/booked' },
-  { id: 'contact', label: 'Контакты', path: '/contact' },
+  { id: 'menu', label: 'Меню', path: '/menu' },
+  { id: 'contacts', label: 'Контакты', path: '/contacts' },
 ];
 
 interface NavigationProps {

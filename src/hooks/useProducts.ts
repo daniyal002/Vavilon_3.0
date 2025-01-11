@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { axiosAuth } from '../api/axios';
+import { axiosAuth, axiosClassic } from '../api/axios';
 import { Product } from '../types/product';
 
 export const useProducts = () => {
@@ -9,7 +9,7 @@ export const useProducts = () => {
   const productsQuery = useQuery<Product[]>({
     queryKey: ['products'],
     queryFn: async () => {
-      const { data } = await axiosAuth.get('/products');
+      const { data } = await axiosClassic.get('/products');
       return data;
     },
   });
@@ -19,7 +19,7 @@ export const useProducts = () => {
     return useQuery<Product>({
       queryKey: ['product', id],
       queryFn: async () => {
-        const { data } = await axiosAuth.get(`/products/${id}`);
+        const { data } = await axiosClassic.get(`/products/${id}`);
         return data;
       },
     });

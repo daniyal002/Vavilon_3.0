@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AdminPage } from './pages/AdminPage';
 import { MoviePage } from './pages/MoviePage';
 import { ContactsPage } from './pages/ContactsPage';
+import ProductPage from './pages/ProductPage';
 
 export function App() {
   const queryClient = new QueryClient({
@@ -27,6 +28,7 @@ export function App() {
             <Route index element={<Movies />} />
             <Route path="booked" element={<BookedPosters />} />
             <Route path="contacts" element={<ContactsPage />} />
+            <Route path="menu" element={<ProductPage />} />
           </Route>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />

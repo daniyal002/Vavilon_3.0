@@ -1,13 +1,85 @@
-import { MapPin, Phone, Mail, Clock, Send, Instagram } from 'lucide-react';
+import { MapPin, Phone, Instagram, Send } from 'lucide-react';
+import { useState } from 'react';
 
 export function ContactsPage() {
+  const images = [
+    'https://avatars.mds.yandex.net/get-altay/11748256/2a00000190ba7ba5c05aa2deafa828ecf9a6/XXXL',
+    'https://avatars.mds.yandex.net/get-altay/13287730/2a00000190ba7d10bf12ea77b96a859b6f32/XXXL',
+    'https://avatars.mds.yandex.net/get-altay/5245944/2a0000017be51be1a10f7d175fafa7a4ee21/XXXL',
+    // Замените на свои URL изображений
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const nextSlide = () => {
+    if (isAnimating) return; // Если анимация идет, не переключаем слайд
+    setIsAnimating(true);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setTimeout(() => setIsAnimating(false), 500); // Время анимации
+  };
+
+  const prevSlide = () => {
+    if (isAnimating) return; // Если анимация идет, не переключаем слайд
+    setIsAnimating(true);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+    );
+    setTimeout(() => setIsAnimating(false), 500); // Время анимации
+  };
+
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-        Контакты
-      </h1>
+      <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+        О нас
+      </h2>
+      <h2 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+        Фотографии
+      </h2>
+      {/* Слайдер для фотографий */}
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="bg-purple-900/40 backdrop-blur-sm rounded-xl p-6 border border-purple-500/10 w-full">
+        <div className="relative">
+          <img
+            src={images[currentIndex]}
+            alt={`Слайд ${currentIndex + 1}`}
+            className={`w-full md:w-1/2 mx-auto object-cover rounded-md transition-transform duration-500 ${
+              isAnimating ? 'transform scale-95' : 'transform scale-100'
+            }`}
+          />
+          <button
+            onClick={prevSlide}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-purple-600 text-white rounded-md p-2 hover:bg-purple-500 transition-colors cursor-pointer"
+          >
+            &#10094; {/* Стрелка влево */}
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-purple-600 text-white rounded-md p-2 hover:bg-purple-500 transition-colors cursor-pointer"
+          >
+            &#10095; {/* Стрелка вправо */}
+          </button>
+        </div>
+
+        {/* Индикаторы активного изображения */}
+        <div className="flex justify-center mt-4">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 mx-1 rounded-full ${
+                currentIndex === index ? 'bg-purple-400' : 'bg-purple-200'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <h2 className="text-1xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+        Контакты
+      </h2>
+
+      <div className="grid md:grid-cols-1 gap-6">
         <div className="space-y-6">
           <div className="bg-purple-900/40 backdrop-blur-sm rounded-xl p-6 border border-purple-500/10">
             <h2 className="text-xl font-semibold text-purple-200 mb-4">
@@ -54,29 +126,16 @@ export function ContactsPage() {
             </div>
           </div>
         </div>
-
-        <div className="bg-purple-900/40 backdrop-blur-sm rounded-xl p-6 border border-purple-500/10">
-          <h2 className="text-xl font-semibold text-purple-200 mb-4">
-            Как добраться
-          </h2>
-          <p className="text-purple-300">
-            На машине: Удобная парковка прямо у входа в кинотеатр.
-            <br />
-            На метро: Станция "Примерная", выход №1.
-            <br />
-            На автобусе: Остановка "Кинотеатр", маршруты 1, 2, 3.
-          </p>
-        </div>
       </div>
 
       <div className="bg-purple-900/40 backdrop-blur-sm rounded-xl p-6 border border-purple-500/10 h-[400px]">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5838.081778473799!2d47.439674358146064!3d42.97741230000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x404ea148791b54bf%3A0x96e94a8ff778ee5!2z0JrQuNC90L7RgtC10LDRgtGAINC90LAg0LrRgNGL0YjQtSDQv9C-0LQg0L7RgtC60YDRi9GC0YvQvCDQvdC10LHQvtC8IFZBVklMT04!5e0!3m2!1sru!2sru!4v1735989745283!5m2!1sru!2sru"
-          className="w-full h-full rounded-lg"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-        />
+          src="https://yandex.ru/map-widget/v1/?um=constructor%3Af618ca357d4d11049ffd45737a36e8c5de8d603c8c81fd368f77a37d877049b1&amp;source=constructor"
+          width="100%"
+          height="350"
+          className="rounded-xl"
+          frameBorder={0}
+        ></iframe>
       </div>
     </div>
   );
