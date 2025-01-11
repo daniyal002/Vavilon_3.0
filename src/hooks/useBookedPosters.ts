@@ -1,22 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Product } from '../types/product';
-
-interface BookedPoster {
-  id: string;
-  movieId: string;
-  title: string;
-  imageUrl: string;
-  showtime: string;
-  seats: number;
-  phoneNumber: string;
-  totalPrice: number;
-  bookingDate: string;
-  row?: number[];
-  seatPerRow?: number[];
-  theaterType?: string;
-  theater?:string;
-  product?:Product;
-}
+import { BookedPoster } from '../types/bookedPoster';
 
 // Создаем кастомное событие для синхронизации между вкладками
 const STORAGE_EVENT = 'BOOKED_POSTERS_UPDATE';

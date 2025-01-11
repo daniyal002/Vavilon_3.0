@@ -106,11 +106,28 @@ export const useBookings = () => {
     });
   }
 
+  // Проверка подтверждений бронирования
+const useCheckConfirmation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ bookings: { showTimeId: number; phone: string,confirmation:boolean }[] }, Error, { bookings: { showTimeId: number; phone: string }[] }>({
+    mutationFn: async (data) => {
+      const { data: confirmations } = await axiosClassic.post('/bookings/check-confirmation', data);
+      return confirmations;
+    },
+    onSuccess: () => {
+      // Здесь можно обновить кэш или выполнить другие действия при успешном запросе
+      queryClient.invalidateQueries({queryKey:['bookings']});
+    },
+  });
+};
+
   return {
     useBookingsQuery,
     useBookingsByPhone,
     useBooking,
     useBookingSummariesByPhone,
+    useCheckConfirmation,
     createBookingMutation,
     updateBookingMutation,
     deleteBookingMutation,

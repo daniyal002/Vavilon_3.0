@@ -47,7 +47,7 @@ export function BookingForm({
 
   const totalPrice = basePrice - basePrice * discount;
 
-  const { addBookedPoster, editBookedPoster } = useBookedPosters();
+  const { addBookedPoster } = useBookedPosters();
   const { createBookingMutation } = useBookings();
   const { useCheckPromoCode } = usePromoCodes();
   const promoCodeQuery = useCheckPromoCode(promoCode, {
@@ -112,7 +112,10 @@ export function BookingForm({
                 : undefined,
             theaterType: showTime.theater.type,
             theater: showTime.theater.name,
-            product:promoCodeProduct
+            product:promoCodeProduct,
+            confirmation:false,
+            date:showTime.date.toString(),
+            endTime:formatTime(showTime.endTime.toString()),
           });
           onSuccess?.();
           onClose?.();

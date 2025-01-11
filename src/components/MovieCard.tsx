@@ -138,7 +138,8 @@ export function MovieCard(showTime: MovieCardProps) {
                   >
                     Просмотр
                   </button>
-                  <button
+                  {currentBooking.confirmation && (
+                    <button
                     onClick={() => {
                       if (
                         window.confirm(
@@ -168,6 +169,7 @@ export function MovieCard(showTime: MovieCardProps) {
                   >
                     Отменить
                   </button>
+                  )}
                 </>
               ) : (
                 <button
