@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosAuth, axiosClassic } from '../api/axios';
 import { Booking, BookingSummarysByPhone, CreateBookingDTO, UpdateBookingDTO } from '../types/booking';
+import toast from 'react-hot-toast';
 
 export const useBookings = () => {
   const queryClient = useQueryClient();
@@ -74,6 +75,10 @@ export const useBookings = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+    onError(error) {
+      // @ts-ignore
+      toast.error(error.response.data.error)
     },
   });
 

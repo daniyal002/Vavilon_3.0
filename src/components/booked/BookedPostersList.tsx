@@ -3,6 +3,7 @@ import { useBookedPosters } from '../../hooks/useBookedPosters';
 import { useBookings } from '../../hooks/useBookings';
 import { useEffect, useState } from 'react';
 import { BookedPoster } from '../../types/bookedPoster';
+import { Toaster } from 'react-hot-toast';
 
 export function BookedPostersList() {
   // Используем хук для получения актуального списка броней
@@ -21,7 +22,6 @@ export function BookedPostersList() {
         const endTime = new Date(
           `${poster.date.split('T')[0]}T${poster.endTime}:00`
         );
-        console.log(new Date(`${poster.endTime}`));
         return endTime > currentDateTime;
       })
     );
@@ -55,6 +55,7 @@ export function BookedPostersList() {
 
   return (
     <div>
+      <Toaster/>
       <div className="flex justify-start mb-6">
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button

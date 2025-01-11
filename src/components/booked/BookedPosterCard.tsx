@@ -13,8 +13,14 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
   const bookingDate = new Date(props.bookingDate).toLocaleDateString('ru-RU');
 
   const handleDeleteBooking = () => {
-    deleteBooking({ id: Number(props.id), phone: props.phoneNumber });
-    removeBookedPoster(props.id);
+    deleteBooking(
+      { id: Number(props.id), phone: props.phoneNumber },
+      {
+        onSuccess() {
+          removeBookedPoster(props.id);
+        },
+      }
+    );
   };
 
   return (
@@ -41,21 +47,28 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
         <h3 className="text-xl font-semibold text-purple-200">{props.title}</h3>
         <div className="text-sm text-purple-300 space-y-1">
           <p>
-            <span className="font-medium text-purple-100">Сеанс:</span> {props.showtime}
+            <span className="font-medium text-purple-100">Сеанс:</span>{' '}
+            {props.showtime}
           </p>
           <p>
-            <span className="font-medium text-purple-100">Мест:</span> {props.seats}
+            <span className="font-medium text-purple-100">Мест:</span>{' '}
+            {props.seats}
           </p>
           <p>
-            <span className="font-medium text-purple-100">Телефон:</span> {props.phoneNumber}
+            <span className="font-medium text-purple-100">Телефон:</span>{' '}
+            {props.phoneNumber}
           </p>
           {props.theater && (
             <p>
-              <span className="font-medium text-purple-100">Зал:</span> {props.theater}
+              <span className="font-medium text-purple-100">Зал:</span>{' '}
+              {props.theater}
             </p>
           )}
           <p>
-            <span className="font-medium text-purple-100">Дата бронирования:</span> {bookingDate}
+            <span className="font-medium text-purple-100">
+              Дата бронирования:
+            </span>{' '}
+            {bookingDate}
           </p>
           {props.row && (
             <p>
@@ -71,7 +84,8 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
           )}
           {props.product && (
             <p>
-              <span className="font-medium text-purple-100">Подарок:</span> {props.product.name}
+              <span className="font-medium text-purple-100">Подарок:</span>{' '}
+              {props.product.name}
             </p>
           )}
           {props.confirmation && (

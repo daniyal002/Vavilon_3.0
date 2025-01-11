@@ -25,6 +25,9 @@ export function Footer() {
               <Link to="/booked" className="text-purple-300 hover:text-purple-200 transition-colors">
                 Мои билеты
               </Link>
+              <Link to="/menu" className="text-purple-300 hover:text-purple-200 transition-colors">
+                Меню
+              </Link>
               <Link to="/contacts" className="text-purple-300 hover:text-purple-200 transition-colors">
                 Контакты
               </Link>
