@@ -27,8 +27,13 @@ export default {
         gradient: 'gradient 3s linear infinite',
         neonBlink: 'neonBlink 12s infinite',
         'fade-in': 'fade-in 0.5s ease-out',
+        slideFromRight: 'slideFromRight 0.3s ease-out',
       },
       keyframes: {
+        slideFromRight: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
         'fade-in': {
           '0%': { opacity: '0', transform: 'scale(0.9)' },
           '100%': { opacity: '1', transform: 'scale(1)' },

@@ -28,6 +28,9 @@ export function Footer() {
               <Link to="/menu" className="text-purple-300 hover:text-purple-200 transition-colors">
                 Меню
               </Link>
+              <Link to="/about-us" className="text-purple-300 hover:text-purple-200 transition-colors">
+                Фотографии
+              </Link>
               <Link to="/contacts" className="text-purple-300 hover:text-purple-200 transition-colors">
                 Контакты
               </Link>

@@ -9,6 +9,7 @@ import { AdminPage } from './pages/AdminPage';
 import { MoviePage } from './pages/MoviePage';
 import { ContactsPage } from './pages/ContactsPage';
 import ProductPage from './pages/ProductPage';
+import { AboutUsPage } from './pages/AboutUsPage';
 
 export function App() {
   const queryClient = new QueryClient({
@@ -29,6 +30,7 @@ export function App() {
             <Route path="booked" element={<BookedPosters />} />
             <Route path="contacts" element={<ContactsPage />} />
             <Route path="menu" element={<ProductPage />} />
+            <Route path="about-us" element={<AboutUsPage />} />
           </Route>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />

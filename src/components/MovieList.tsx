@@ -1,17 +1,24 @@
-import { format, addDays, isBefore, startOfDay, setHours } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useShowTimes } from '../hooks/useShowTimes';
 import { MovieCard } from './MovieCard';
 import { ShowTime } from '../types/showtime';
+import { MoveLeft, MoveRight } from 'lucide-react';
 
 export function MovieList() {
-  const [selectedTheater, setSelectedTheater] = useState<string>('all');
+  const [selectedTheater, setSelectedTheater] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(
     format(new Date(), 'yyyy-MM-dd')
   );
   const { showTimesQuery } = useShowTimes();
+
+  useEffect(() => {
+    if (showTimesQuery.data && showTimesQuery.data.showTimes.length > 0) {
+        setSelectedTheater(showTimesQuery.data.showTimes[0].theater.id.toString());
+    }
+  }, [showTimesQuery.data]);
 
   if (showTimesQuery.isLoading) {
     return <div className="text-purple-200">Загрузка...</div>;
@@ -23,7 +30,6 @@ export function MovieList() {
 
   const currentDate = new Date();
 
-  console.log(showTimesQuery.data?.showTimes)
   // Фильтруем сеансы, которые еще не закончились
   const activeShowTimes = (showTimesQuery.data?.showTimes || []).filter(
     (showTime) => new Date(showTime.endTime) > currentDate
@@ -56,7 +62,7 @@ export function MovieList() {
 
   // Получаем уникальные залы
   const uniqueTheaters = Array.from(
-    new Map(activeShowTimes.map((st) => [st.theater.id, st.theater])).values()
+    new Map(showTimesQuery.data?.showTimes.map((st) => [st.theater.id, st.theater])).values()
   );
 
   // Получаем уникальные даты из активных сеансов с учетом правила 5 утра
@@ -68,21 +74,24 @@ export function MovieList() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 mb-10">
         {/* Фильтр по залам */}
-        {uniqueTheaters.length > 0 && (
-          <div className="w-full">
-            <select
-              value={selectedTheater}
-              onChange={(e) => setSelectedTheater(e.target.value)}
-              className="w-full p-3 bg-purple-900/50 border border-purple-700/30 
-                rounded-lg text-purple-200 appearance-none outline-none"
-            >
-              <option value="all">Все залы</option>
+        {selectedTheater && (
+          <div className="w-full overflow-x-auto">
+            <div className="flex gap-2 min-w-max">
               {uniqueTheaters.map((theater) => (
-                <option key={theater.id} value={theater.id}>
+                <button
+                  key={theater.id}
+                  onClick={() => setSelectedTheater(theater.id.toString())}
+                  className={`px-4 py-3 rounded-lg whitespace-nowrap min-w-[100px]
+                    ${
+                      selectedTheater === theater.id.toString()
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-purple-900/50 text-purple-300 hover:bg-purple-800'
+                    }`}
+                >
                   {theater.name}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
         )}
 
@@ -120,7 +129,11 @@ export function MovieList() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <Toaster />
         {filteredShowTimes.map((showTime) => (
-          <MovieCard key={showTime.id} {...showTime} ENABLE_PROMOCODE={showTimesQuery.data?.ENABLE_PROMOCODE as boolean}/>
+          <MovieCard
+            key={showTime.id}
+            {...showTime}
+            ENABLE_PROMOCODE={showTimesQuery.data?.ENABLE_PROMOCODE as boolean}
+          />
         ))}
       </div>
     </div>

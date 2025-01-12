@@ -8,7 +8,7 @@ export function MobileMenu() {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <div className="md:hidden  ">
+    <div className="md:hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 text-purple-400 hover:text-purple-300 transition-colors"
@@ -17,9 +17,16 @@ export function MobileMenu() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-[160 px] left-0 right-0 z-[100] bg-black/50 backdrop-blur-lg border-t border-purple-900/50 animate-slideDown">
-          <div className="container mx-auto px-4 py-4">
-            <Navigation vertical className="flex justify-center" onItemClick={handleClose} />
+        <div 
+          className="fixed top-0 right-0 bottom-0 w-[80%] z-[100] 
+          bg-black/90 backdrop-blur-lg 
+          border-l border-purple-900/50 
+          animate-slideFromRight 
+          overflow-y-auto"
+        >
+          <div className="container mx-auto px-4 py-8 h-full">
+            <Navigation
+            />
           </div>
         </div>
       )}
