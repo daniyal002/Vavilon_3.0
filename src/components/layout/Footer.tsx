@@ -10,8 +10,8 @@ export function Footer() {
           {/* Верхняя секция */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             {/* Логотип и описание */}
-            <div className="text-center md:text-left">
-             <Logo size='6xl' text='Vavilon'/>
+            <div className="flex flex-col items-center text-center md:text-left">
+             <Logo/>
               <p className="text-sm text-purple-300 mt-1 px-4">
                 Кинотеатр на крыше
               </p>

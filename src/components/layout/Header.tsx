@@ -8,8 +8,8 @@ export function Header() {
       {/* Logo Section */}
       <div className="w-full bg-black/50 backdrop-blur-sm border-b border-purple-900/20">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-28">
-            <Logo text='V' size='7xl'/>
+          <div className="flex items-center justify-between h-40">
+            <Logo/>
             <Navigation className="hidden md:flex justify-center" />
             <MobileMenu />
           </div>

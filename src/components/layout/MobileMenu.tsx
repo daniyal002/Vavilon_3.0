@@ -17,7 +17,7 @@ export function MobileMenu() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-[112px] left-0 right-0 z-[100] bg-black/50 backdrop-blur-lg border-t border-purple-900/50 animate-slideDown">
+        <div className="absolute top-[160 px] left-0 right-0 z-[100] bg-black/50 backdrop-blur-lg border-t border-purple-900/50 animate-slideDown">
           <div className="container mx-auto px-4 py-4">
             <Navigation vertical className="flex justify-center" onItemClick={handleClose} />
           </div>
