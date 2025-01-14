@@ -3,8 +3,7 @@ import Cookies from 'js-cookie';
 import { EnumTokens } from '../services/auth-token.service';
 import { AuthService } from '../services/auth.service';
 
-// export const baseURL = 'http://localhost:3002';
-export const baseURL = 'http://192.168.28.177:3002';
+export const baseURL = import.meta.env.VITE_API_URL;
 
 const options: CreateAxiosDefaults = {
   baseURL: baseURL,
