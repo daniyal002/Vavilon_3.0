@@ -1,8 +1,6 @@
 import  {
   useState,
   useEffect,
-  MouseEvent,
-  TouchEvent,
   useMemo,
   useRef,
 } from 'react';
@@ -15,6 +13,7 @@ import { useTheaters } from '../../../hooks/useTheaters';
 import { useShowTimes } from '../../../hooks/useShowTimes';
 import { AddShowTimeForm } from './AddShowTimeForm';
 import { Pagination } from '../Pagination';
+import { formatTime } from '../../../utils/formatters';
 // Импортируйте другие необходимые хуки и компоненты
 
 type ShowTimeCopy = Pick<
@@ -87,7 +86,7 @@ export function ShowTimesTable() {
       event.preventDefault();
       let clientX = 0;
       let clientY = 0;
-  
+
       if ('touches' in event && event.touches.length > 0) {
         clientX = event.touches[0].clientX;
         clientY = event.touches[0].clientY;
@@ -95,7 +94,7 @@ export function ShowTimesTable() {
         clientX = event.clientX;
         clientY = event.clientY;
       }
-  
+
       handleContextMenu(clientX, clientY, showTime);
       lastTap = 0;
     } else {
@@ -114,8 +113,8 @@ export function ShowTimesTable() {
     setEditingData({
       movieId: showTime.movieId.toString(),
       theaterId: showTime.theaterId.toString(),
-      startTime: format(new Date(showTime.startTime), 'HH:mm'),
-      endTime: format(new Date(showTime.endTime), 'HH:mm'),
+      startTime: formatTime(showTime.startTime.toString()),
+      endTime: formatTime(showTime.endTime.toString()),
       price: showTime.price.toString(),
       date: format(new Date(showTime.date), 'yyyy-MM-dd'),
       seatsAvailable: showTime.seatsAvailable.toString(),
@@ -303,7 +302,7 @@ export function ShowTimesTable() {
                             theaterId: e.target.value,
                           })
                         }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       >
                         {theatersQuery.data?.map((theater) => (
@@ -365,8 +364,8 @@ export function ShowTimesTable() {
                       </div>
                     ) : (
                       <span className="text-purple-200 text-sm">
-                        {format(new Date(showTime.startTime), 'HH:mm')} -{' '}
-                        {format(new Date(showTime.endTime), 'HH:mm')}
+                        {formatTime(showTime.startTime.toString())} -
+                        {formatTime(showTime.endTime.toString())}
                       </span>
                     )}
                   </td>

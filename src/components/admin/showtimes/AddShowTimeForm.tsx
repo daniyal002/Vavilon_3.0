@@ -5,6 +5,7 @@ import { Theater } from '../../../types/theater';
 import { ShowTime } from '../../../types/showtime';
 import { format } from 'date-fns';
 import MovieSelect from '../../UI/MovieSelect';
+import { formatTime } from '../../../utils/formatters';
 type ShowTimeCopy = Pick<
   ShowTime,
   | 'movieId'
@@ -47,8 +48,8 @@ export function AddShowTimeForm({
       setFormData({
         movieId: initialData.movieId.toString(),
         theaterId: initialData.theaterId.toString(),
-        startTime: format(new Date(initialData.startTime), 'HH:mm'),
-        endTime: format(new Date(initialData.endTime), 'HH:mm'),
+        startTime: formatTime(initialData.startTime.toString()),
+        endTime: formatTime(initialData.endTime.toString()),
         price: initialData.price.toString(),
         date: format(new Date(initialData.date), 'yyyy-MM-dd'),
         seatsAvailable: initialData.seatsAvailable.toString(),
@@ -109,7 +110,7 @@ export function AddShowTimeForm({
             onChange={(e) =>
               setFormData({ ...formData, movieId: e.target.value })
             }
-            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
               text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
           >
             <option value="">Выберите фильм</option>
@@ -133,7 +134,7 @@ export function AddShowTimeForm({
           <select
             value={formData.theaterId}
             onChange={handleTheaterChange}
-            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
               text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
           >
             <option value="">Выберите зал</option>
@@ -152,7 +153,7 @@ export function AddShowTimeForm({
             type="date"
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+            className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
               text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
           />
         </div>
@@ -170,7 +171,7 @@ export function AddShowTimeForm({
                 onChange={(e) =>
                   setFormData({ ...formData, startTime: e.target.value })
                 }
-                className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
                   text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                 placeholder="Начало"
               />
@@ -182,7 +183,7 @@ export function AddShowTimeForm({
                 onChange={(e) =>
                   setFormData({ ...formData, endTime: e.target.value })
                 }
-                className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
                   text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                 placeholder="Конец"
               />
@@ -201,7 +202,7 @@ export function AddShowTimeForm({
                 setFormData({ ...formData, price: e.target.value })
               }
               placeholder="0"
-              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
                 text-purple-200 placeholder-purple-400 focus:outline-none focus:border-purple-500 text-sm"
             />
           </div>
@@ -215,7 +216,7 @@ export function AddShowTimeForm({
               }
               disabled={selectedTheater?.type === 'VIP'}
               placeholder="0"
-              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+              className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
                 text-purple-200 placeholder-purple-400 focus:outline-none focus:border-purple-500 text-sm
                 disabled:opacity-50 disabled:cursor-not-allowed"
             />
@@ -231,8 +232,8 @@ export function AddShowTimeForm({
             !formData.date ||
             isLoading
           }
-          className="w-full mt-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg 
-            font-semibold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 
+          className="w-full mt-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg
+            font-semibold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50
             transition-all duration-300 active:scale-95 hover:scale-[1.02]
             disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >

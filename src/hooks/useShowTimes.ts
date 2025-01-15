@@ -1,20 +1,20 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { axiosAuth, axiosClassic } from '../api/axios';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { axiosAuth, axiosClassic } from "../api/axios";
 import {
   ShowTime,
   CreateShowTimeDTO,
   UpdateShowTimeDTO,
   ShowTimesResponse,
-} from '../types/showtime';
+} from "../types/showtime";
 
 export const useShowTimes = () => {
   const queryClient = useQueryClient();
 
   // Получение всех сеансов для публичной части
   const showTimesQuery = useQuery({
-    queryKey: ['showTimes'],
+    queryKey: ["showTimes"],
     queryFn: async () => {
-      const { data } = await axiosClassic.get<ShowTimesResponse>('/showtimes');
+      const { data } = await axiosClassic.get<ShowTimesResponse>("/showtimes");
       return data;
     },
   });
@@ -22,10 +22,10 @@ export const useShowTimes = () => {
   // Получение сеансов с бронированиями для админки
   const useShowTimesWithBookings = () =>
     useQuery({
-      queryKey: ['showTimesWithBookings'],
+      queryKey: ["showTimesWithBookings"],
       queryFn: async () => {
         const { data } = await axiosAuth.get(
-          '/showtimes/allShowTimesWithBookingCount'
+          "/showtimes/allShowTimesWithBookingCount"
         );
         return data;
       },
@@ -35,17 +35,22 @@ export const useShowTimes = () => {
   const createShowTimeMutation = useMutation({
     mutationFn: async (showTimeData: CreateShowTimeDTO) => {
       const { data } = await axiosAuth.post<ShowTime>(
-        '/showtimes',
+        "/showtimes",
         showTimeData
       );
       return data;
     },
     onSuccess: (newShowTime) => {
-      queryClient.setQueryData<ShowTime[]>(['showTimes'], (oldData) => {
-        if (!oldData) return [newShowTime];
-        return [...oldData, newShowTime];
+      queryClient.setQueryData<ShowTimesResponse>(["showTimes"], (oldData) => {
+        if (!oldData) {
+          return { showTimes: [newShowTime], ENABLE_PROMOCODE: false }; // или true, в зависимости от вашей логики
+        }
+        return {
+          ...oldData, // сохраняем старые данные
+          showTimes: [...oldData.showTimes, newShowTime], // добавляем новый сеанс
+        };
       });
-      queryClient.invalidateQueries({ queryKey: ['showTimesWithBookings'] });
+      queryClient.invalidateQueries({ queryKey: ["showTimesWithBookings"] });
     },
   });
 
@@ -59,13 +64,13 @@ export const useShowTimes = () => {
       return data;
     },
     onSuccess: (updatedShowTime) => {
-      queryClient.setQueryData<ShowTime[]>(['showTimes'], (oldData) => {
-        if (!oldData) return [updatedShowTime];
-        return oldData.map((showTime) =>
-          showTime.id === updatedShowTime.id ? updatedShowTime : showTime
-        );
+      queryClient.setQueryData<ShowTimesResponse>(["showTimes"], (oldData) => {
+        if (!oldData) return { showTimes: [updatedShowTime], ENABLE_PROMOCODE: false };
+        return {...oldData,
+          showTimes: oldData.showTimes.map((showTime) =>
+          showTime.id === updatedShowTime.id ? updatedShowTime : showTime)};
       });
-      queryClient.invalidateQueries({ queryKey: ['showTimesWithBookings'] });
+      queryClient.invalidateQueries({ queryKey: ["showTimesWithBookings"] });
     },
   });
 
@@ -76,18 +81,18 @@ export const useShowTimes = () => {
       return id;
     },
     onSuccess: (deletedId) => {
-      queryClient.setQueryData<ShowTime[]>(['showTimes'], (oldData) => {
+      queryClient.setQueryData<ShowTime[]>(["showTimes"], (oldData) => {
         if (!oldData) return [];
         return oldData.filter((showTime) => showTime.id !== deletedId);
       });
-      queryClient.invalidateQueries({ queryKey: ['showTimesWithBookings'] });
+      queryClient.invalidateQueries({ queryKey: ["showTimesWithBookings"] });
     },
   });
 
   // Проверка бронирования
   const useCheckBooking = (showTimeId: number) =>
     useQuery({
-      queryKey: ['booking', showTimeId],
+      queryKey: ["booking", showTimeId],
       queryFn: async () => {
         const { data } = await axiosAuth.get(
           `/showtimes/checkBooking/${showTimeId}`
@@ -100,7 +105,7 @@ export const useShowTimes = () => {
   // Получение отдельного сеанса
   const useShowTime = (id: number) =>
     useQuery({
-      queryKey: ['showTimes', id],
+      queryKey: ["showTimes", id],
       queryFn: async () => {
         const { data } = await axiosAuth.get<ShowTime>(`/showtimes/${id}`);
         return data;

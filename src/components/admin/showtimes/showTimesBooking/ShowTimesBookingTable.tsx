@@ -7,6 +7,7 @@ import { Pagination } from '../../Pagination';
 import { ShowTime } from '../../../../types/showtime';
 import { useBookings } from '../../../../hooks/useBookings';
 import { AddShowTimeBookingForm } from './AddShowTimeBookingForm';
+import { formatTime } from '../../../../utils/formatters';
 
 export function ShowTimesBookingTable() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -120,13 +121,13 @@ export function ShowTimesBookingTable() {
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+            className="p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
               text-purple-200 focus:outline-none focus:border-purple-500"
           />
           {dateFilter && (
             <button
               onClick={() => setDateFilter('')}
-              className="p-2 bg-purple-900/50 rounded-lg text-purple-300 
+              className="p-2 bg-purple-900/50 rounded-lg text-purple-300
                 hover:bg-purple-800/50 transition-colors"
             >
               Сбросить
@@ -191,11 +192,12 @@ export function ShowTimesBookingTable() {
                     <td className="px-6 py-4 text-purple-200">
                       {format(
                         new Date(showTime.startTime),
-                        'dd MMMM yyyy, HH:mm',
+                        'dd MMMM yyyy',
                         {
                           locale: ru,
                         }
-                      )}
+                      )} -
+                      {formatTime(showTime.startTime.toString())}
                     </td>
                     <td className="px-6 py-4 text-purple-200">
                       {showTime.seatsAvailable}
@@ -244,7 +246,7 @@ export function ShowTimesBookingTable() {
                               {showTime.bookings.map((booking) => (
                                 <div
                                   key={booking.id}
-                                  className="flex items-center justify-between bg-purple-900/20 
+                                  className="flex items-center justify-between bg-purple-900/20
                                   rounded-lg p-3 text-sm text-purple-200"
                                 >
                                   <div className="flex gap-6">
