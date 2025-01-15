@@ -42,7 +42,15 @@ export function MovieList() {
     const fiveAM = new Date(showDate);
     fiveAM.setHours(5, 0, 0, 0);
 
-    return startTime < fiveAM
+    console.log(
+   startTime.toLocaleDateString("ru-Ru",{hour: '2-digit',
+    minute: '2-digit', day:"2-digit",timeZone:"UTC"}), fiveAM.toLocaleDateString("ru-Ru",{hour: '2-digit',
+      minute: '2-digit', day:"2-digit"})
+
+    )
+    return startTime.toLocaleDateString("ru-Ru",{hour: '2-digit',
+      minute: '2-digit', day:"2-digit",timeZone:"UTC"}) < fiveAM.toLocaleDateString("ru-Ru",{hour: '2-digit',
+        minute: '2-digit', day:"2-digit"})
       ? format(addDays(showDate, -1), 'yyyy-MM-dd')
       : format(showDate, 'yyyy-MM-dd');
   };
@@ -107,7 +115,7 @@ export function MovieList() {
                 <button
                   key={date}
                   onClick={() => setSelectedDate(date)}
-                  className={`px-4 py-3 rounded-lg whitespace-nowrap min-w-[100px] 
+                  className={`px-4 py-3 rounded-lg whitespace-nowrap min-w-[100px]
                     ${
                       selectedDate === date
                         ? 'bg-purple-600/80 text-white'
