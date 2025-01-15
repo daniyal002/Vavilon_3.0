@@ -81,9 +81,11 @@ export const useShowTimes = () => {
       return id;
     },
     onSuccess: (deletedId) => {
-      queryClient.setQueryData<ShowTime[]>(["showTimes"], (oldData) => {
-        if (!oldData) return [];
-        return oldData.filter((showTime) => showTime.id !== deletedId);
+      queryClient.setQueryData<ShowTimesResponse>(["showTimes"], (oldData) => {
+        if (!oldData) return { showTimes: [], ENABLE_PROMOCODE: false };
+        return {...oldData,
+          showTimes: oldData.showTimes.filter((showTime) =>
+            showTime.id !== deletedId)};
       });
       queryClient.invalidateQueries({ queryKey: ["showTimesWithBookings"] });
     },
