@@ -287,7 +287,7 @@ export function ShowTimesTable() {
                         isLabel={false}
                       />
                     ) : (
-                      <span className="text-purple-200 text-sm">
+                      <span className="text-purple-200 md:text-sm text-xs">
                         {showTime.movie.title}
                       </span>
                     )}
@@ -312,7 +312,7 @@ export function ShowTimesTable() {
                         ))}
                       </select>
                     ) : (
-                      <span className="text-purple-200 text-sm">
+                      <span className="text-purple-200 md:text-sm text-xs">
                         {showTime.theater.name}
                       </span>
                     )}
@@ -331,7 +331,7 @@ export function ShowTimesTable() {
                         className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
-                      <span className="text-purple-200 text-sm">
+                      <span className="text-purple-200 md:text-sm text-xs">
                         {format(new Date(showTime.date), 'dd.MM.yyyy')}
                       </span>
                     )}
@@ -363,7 +363,7 @@ export function ShowTimesTable() {
                         />
                       </div>
                     ) : (
-                      <span className="text-purple-200 text-sm">
+                      <span className="text-purple-200 md:text-sm text-xs">
                         {formatTime(showTime.startTime.toString())} -
                         {formatTime(showTime.endTime.toString())}
                       </span>
@@ -383,7 +383,7 @@ export function ShowTimesTable() {
                         className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
-                      <span className="text-purple-200 text-sm">
+                      <span className="text-purple-200 md:text-sm text-xs">
                         {showTime.price}
                       </span>
                     )}
@@ -402,7 +402,7 @@ export function ShowTimesTable() {
                         className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
-                      <span className="text-purple-200 text-sm">
+                      <span className="text-purple-200 md:text-sm text-xs">
                         {showTime.seatsAvailable}
                       </span>
                     )}
@@ -428,7 +428,7 @@ export function ShowTimesTable() {
         <div ref={contextMenuRef}>
         <ContextMenu
           x={contextMenu.x}
-          y={contextMenu.y}
+          y={contextMenu.y - 130}
           onEdit={() => handleEdit(contextMenu.showTime!)}
           onDelete={() => handleDelete(contextMenu.showTime!.id)}
           onCopy={() => handleCopy(contextMenu.showTime!)}

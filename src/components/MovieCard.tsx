@@ -53,8 +53,8 @@ export function MovieCard(showTime: MovieCardProps) {
 
   return (
     <div
-      className="group bg-purple-900/40 rounded-xl overflow-hidden shadow-lg 
-      border border-purple-500/10 hover:border-purple-500/20 
+      className="group bg-purple-900/40 rounded-xl overflow-hidden shadow-lg
+      border border-purple-500/10 hover:border-purple-500/20
       transition-all duration-300"
     >
       {isBooking ? (
@@ -83,7 +83,7 @@ export function MovieCard(showTime: MovieCardProps) {
               </span>
               {showTime.theater.type === 'VIP' && (
                 <span
-                  className="px-2 py-1 bg-gradient-to-r from-amber-500 to-yellow-500 
+                  className="px-2 py-1 bg-gradient-to-r from-amber-500 to-yellow-500
                   rounded-md text-sm font-semibold text-white
                   transform transition-transform duration-300 hover:scale-110
                   shadow-lg shadow-amber-500/20 text-center"
@@ -91,7 +91,18 @@ export function MovieCard(showTime: MovieCardProps) {
                   VIP
                 </span>
               )}
+
             </div>
+            {showTime.movie.premiere && (
+                <span
+                  className="absolute bottom-2 right-2 z-20 px-2 py-1 bg-gradient-to-r from-red-700 to-red-500
+                  rounded-md text-sm font-semibold text-white
+                  transform transition-transform duration-300 hover:scale-110
+                  shadow-lg shadow-amber-500/20 text-center"
+                >
+                  Премьера
+                </span>
+              )}
             <div className="absolute bottom-2 left-2 z-20">
               <span
                 className="px-2 py-1 bg-purple-900/80 rounded-md text-sm font-semibold
@@ -111,7 +122,7 @@ export function MovieCard(showTime: MovieCardProps) {
           {/* Content Section */}
           <div className="p-6 flex flex-col flex-grow justify-between">
             <h2
-              className="text-xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 
+              className="text-xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400
               text-transparent bg-clip-text animate-gradient"
               onClick={() => navigate(`/movies/${showTime.movie.id}`)}
             >
@@ -129,16 +140,15 @@ export function MovieCard(showTime: MovieCardProps) {
 
             <div className="mt-auto flex gap-2">
               {currentBooking ? (
-                <>
+                <div className='flex flex-col md:flex-row flex-1 gap-3'>
                   <button
                     onClick={() => navigate('/booked')}
-                    className="flex-1 py-3 px-6 rounded-lg font-semibold text-white 
+                    className="flex-1 py-3 px-6 rounded-lg font-semibold text-white
                       bg-purple-600 shadow-purple-500/30 hover:shadow-purple-500/50
                       transition-all duration-300 active:scale-95 hover:scale-[1.02]"
                   >
                     Просмотр
                   </button>
-                  {currentBooking.confirmation && (
                     <button
                     onClick={() => {
                       if (
@@ -157,27 +167,26 @@ export function MovieCard(showTime: MovieCardProps) {
                               queryClient.invalidateQueries({
                                 queryKey: ['showTimes'],
                               });
+                            setCurrentBooking(null);
                             },
                           }
                         );
-                        setCurrentBooking(null);
                       }
                     }}
-                    className="py-3 px-6 rounded-lg font-semibold text-white 
+                    className="py-3 px-6 rounded-lg font-semibold text-white
                       bg-red-600 shadow-red-500/30 hover:shadow-red-500/50
                       transition-all duration-300 active:scale-95 hover:scale-[1.02]"
                   >
                     Отменить
                   </button>
-                  )}
-                </>
+                </div>
               ) : (
                 <button
                   onClick={handleBookingClick}
                   disabled={showTime.seatsAvailable === 0}
                   className="flex-1 py-3 px-6 rounded-lg font-semibold text-white
-                    bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/30 
-                    hover:shadow-purple-500/50 transition-all duration-300 
+                    bg-gradient-to-r from-purple-600 to-pink-600 shadow-purple-500/30
+                    hover:shadow-purple-500/50 transition-all duration-300
                     active:scale-95 hover:scale-[1.02]
                     disabled:opacity-50 disabled:cursor-not-allowed"
                 >

@@ -5,6 +5,7 @@ import { useBookings } from '../../hooks/useBookings';
 import { baseURL } from '../../api/axios';
 import { BookedPoster } from '../../types/bookedPoster';
 import { QRCodeCanvas } from 'qrcode.react';
+import {isAxiosError} from 'axios';
 
 type BookedPosterCardProps = BookedPoster;
 
@@ -22,6 +23,11 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
         onSuccess() {
           removeBookedPoster(props.id);
         },
+        onError: (error: unknown) => {
+          if (isAxiosError(error) && error.status === 404) {
+            removeBookedPoster(props.id);
+          }
+        }
       }
     );
   };
@@ -32,7 +38,7 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
 
   return (
     <div
-      className="relative w-full max-w-xs sm:max-w-sm mx-auto bg-purple-900/40 shadow-lg rounded-xl 
+      className="relative w-full max-w-xs sm:max-w-sm mx-auto bg-purple-900/40 shadow-lg rounded-xl
       transform transition-transform duration-300 hover:scale-105 perspective-1000 cursor-pointer"
       onClick={toggleFlip}
     >
@@ -42,7 +48,7 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
       >
         {/* Лицевая сторона */}
         <div
-          className={`w-full h-full bg-purple-900/40 rounded-xl overflow-hidden 
+          className={`w-full h-full bg-purple-900/40 rounded-xl overflow-hidden
           transition-opacity duration-700 backface-hidden
           ${isFlipped ? 'opacity-0 invisible' : 'opacity-100 visible'}`}
         >

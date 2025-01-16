@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GenresTable } from '../components/admin/genres/GenresTable';
 import { TheatersTable } from '../components/admin/theaters/TheatersTable';
 import { MoviesTable } from '../components/admin/movies/MoviesTable';
@@ -14,6 +14,7 @@ import { ShowTimesBookingTable } from '../components/admin/showtimes/showTimesBo
 import { Menu, X } from 'lucide-react';
 import BookingSummariesTable from '../components/admin/summariesByPhone/BookingSummariesTable';
 import SettingsTable from '../components/admin/settings/SettingsTable';
+import { useNavigate } from 'react-router-dom';
 
 type AdminTab =
   | 'genres'
@@ -33,9 +34,15 @@ export function AdminPage() {
   const isAuthenticated = getAccessToken();
   const [activeTab, setActiveTab] = useState<AdminTab>('genres');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
 
-  if (!isAuthenticated) {
-    return <LoginPage />;
+  if(!isAuthenticated){
+    return null
   }
 
   const navigationButtons = [
@@ -73,7 +80,7 @@ export function AdminPage() {
 
       {/* Сайдбар */}
       <div
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-purple-950/80 backdrop-blur-xl 
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-purple-950/80 backdrop-blur-xl
           border-r border-purple-500/10 transform transition-transform duration-300 z-50
           overflow-y-auto md:overflow-y-visible
           ${
