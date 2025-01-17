@@ -42,12 +42,6 @@ export function MovieList() {
     const fiveAM = new Date(showDate);
     fiveAM.setHours(5, 0, 0, 0);
 
-    console.log(
-   startTime.toLocaleDateString("ru-Ru",{hour: '2-digit',
-    minute: '2-digit', day:"2-digit",timeZone:"UTC"}), fiveAM.toLocaleDateString("ru-Ru",{hour: '2-digit',
-      minute: '2-digit', day:"2-digit"})
-
-    )
     return startTime.toLocaleDateString("ru-Ru",{hour: '2-digit',
       minute: '2-digit', day:"2-digit",timeZone:"UTC"}) < fiveAM.toLocaleDateString("ru-Ru",{hour: '2-digit',
         minute: '2-digit', day:"2-digit"})
