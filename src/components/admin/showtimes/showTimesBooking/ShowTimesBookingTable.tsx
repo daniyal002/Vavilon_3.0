@@ -51,6 +51,12 @@ export function ShowTimesBookingTable() {
         ((activeTab === 'current' && !isArchived) ||
           (activeTab === 'archive' && isArchived))
       );
+    }).sort((a:ShowTime, b:ShowTime) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      const timeA = new Date(a.startTime).getTime();
+      const timeB = new Date(b.startTime).getTime();
+      return dateA - dateB || timeA - timeB; // Сортировка по дате и времени
     }) || [];
 
   const totalPages = Math.ceil(filteredShowTimes.length / itemsPerPage);
@@ -95,7 +101,7 @@ export function ShowTimesBookingTable() {
       <div className="flex flex-wrap gap-4 mb-4">
         <div className="flex gap-4">
           <button
-            onClick={() => setActiveTab('current')}
+            onClick={() => {setActiveTab('current');setCurrentPage(1)}}
             className={`px-4 py-2 rounded-lg ${
               activeTab === 'current'
                 ? 'bg-purple-600/80 text-white'
@@ -105,7 +111,7 @@ export function ShowTimesBookingTable() {
             Текущие сеансы
           </button>
           <button
-            onClick={() => setActiveTab('archive')}
+            onClick={() => {setActiveTab('archive');setCurrentPage(1)}}
             className={`px-4 py-2 rounded-lg ${
               activeTab === 'archive'
                 ? 'bg-purple-600/80 text-white'

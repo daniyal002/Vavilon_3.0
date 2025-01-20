@@ -1,4 +1,4 @@
-import  {
+import {
   useState,
   useEffect,
   useMemo,
@@ -14,7 +14,6 @@ import { useShowTimes } from '../../../hooks/useShowTimes';
 import { AddShowTimeForm } from './AddShowTimeForm';
 import { Pagination } from '../Pagination';
 import { formatTime } from '../../../utils/formatters';
-// Импортируйте другие необходимые хуки и компоненты
 
 type ShowTimeCopy = Pick<
   ShowTime,
@@ -44,7 +43,7 @@ export function ShowTimesTable() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   const {
-    showTimesQuery,
+    showAllTimesQuery,
     createShowTimeMutation,
     updateShowTimeMutation,
     deleteShowTimeMutation,
@@ -56,6 +55,8 @@ export function ShowTimesTable() {
   const { theatersQuery } = useTheaters();
 
   const [copyData, setCopyData] = useState<ShowTimeCopy | null>(null);
+
+  const { data: showAllTimes } = showAllTimesQuery();
 
   // Состояние для контекстного меню
   const [contextMenu, setContextMenu] = useState<{
@@ -114,7 +115,7 @@ export function ShowTimesTable() {
       movieId: showTime.movieId.toString(),
       theaterId: showTime.theaterId.toString(),
       startTime: formatTime(showTime.startTime.toString()),
-      endTime: formatTime(showTime.endTime.toString()),
+      endTime: formatTime(showTime .endTime.toString()),
       price: showTime.price.toString(),
       date: format(new Date(showTime.date), 'yyyy-MM-dd'),
       seatsAvailable: showTime.seatsAvailable.toString(),
@@ -141,7 +142,6 @@ export function ShowTimesTable() {
 
   const handleSave = () => {
     if (editingId !== null) {
-
       updateShowTimeMutation.mutate({
         id: editingId,
         movieId: Number(editingData.movieId),
@@ -177,19 +177,28 @@ export function ShowTimesTable() {
       seatsAvailable: '',
     });
   };
-
+  const [showCurrent,setShowCurrent] = useState<boolean>(false)
   const filteredAndPaginatedData = useMemo(() => {
-    const filtered = showTimesQuery.data?.showTimes?.filter((showTime) =>
-      showTime.movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      showTime.theater.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+    const currentTime = new Date();
+    const filtered = showAllTimes?.showTimes?.filter((showTime) => {
+      const showStartTime = new Date(showTime.startTime);
+      return showCurrent ? showStartTime >= currentTime : showStartTime < currentTime; // Фильтрация по актуальности
+    }) || [];
 
-    const totalItems = filtered.length;
+    const sorted = filtered.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      const timeA = new Date(a.startTime).getTime();
+      const timeB = new Date(b.startTime).getTime();
+      return dateA - dateB || timeA - timeB; // Сортировка по дате и времени
+    });
+
+    const totalItems = sorted.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const paginated = sorted.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return { showTimes: paginated, totalPages, totalItems };
-  }, [showTimesQuery.data, searchQuery, currentPage, itemsPerPage]);
+  }, [showAllTimes, currentPage, itemsPerPage,showCurrent]);
 
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
@@ -239,6 +248,21 @@ export function ShowTimesTable() {
         />
       </div>
 
+      <div className="flex justify-start gap-4">
+        <button
+          onClick={() => {setShowCurrent(true);setCurrentPage(1)}}
+          className={`px-4 py-2 ${showCurrent ? 'bg-purple-600/80 text-white' : 'bg-purple-900/50 text-purple-300'} px-4 py-2 rounded-lg`}
+        >
+          Актуальные сеансы
+        </button>
+        <button
+          onClick={() => {setShowCurrent(false);setCurrentPage(1)}}
+          className={`px-4 py-2 ${!showCurrent ? 'bg-purple-600/80 text-white' : 'bg-purple-900/50 text-purple-300'} px-4 py-2 rounded-lg`}
+        >
+          Неактуальные сеансы
+        </button>
+      </div>
+
       <div className="bg-purple-950/50 rounded-xl shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-purple-700/30">
@@ -262,11 +286,10 @@ export function ShowTimesTable() {
                 <th className="px-3 py-4 text-left text-xs font-semibold text-purple-200">
                   Места
                 </th>
-                {/* Удаляем колонку "Действия" */}
               </tr>
             </thead>
             <tbody className="divide-y divide-purple-700/30">
-              {filteredAndPaginatedData.showTimes.map((showTime:ShowTime) => (
+              {filteredAndPaginatedData.showTimes.map((showTime: ShowTime) => (
                 <tr
                   key={showTime.id}
                   className="hover:bg-purple-900/20 transition-colors"
@@ -426,22 +449,22 @@ export function ShowTimesTable() {
       {/* Контекстное меню */}
       {contextMenu.visible && contextMenu.showTime && (
         <div ref={contextMenuRef}>
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y - 130}
-          onEdit={() => handleEdit(contextMenu.showTime!)}
-          onDelete={() => handleDelete(contextMenu.showTime!.id)}
-          onCopy={() => handleCopy(contextMenu.showTime!)}
-          onSave={
-            editingId === contextMenu.showTime.id ? handleSave : undefined
-          }
-          onCancel={
-            editingId === contextMenu.showTime.id ? handleCancel : undefined
-          }
-          onClose={handleCloseContextMenu}
-          isEditing={editingId === contextMenu.showTime.id}
-        />
-      </div>
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y - 130}
+            onEdit={() => handleEdit(contextMenu.showTime!)}
+            onDelete={() => handleDelete(contextMenu.showTime!.id)}
+            onCopy={() => handleCopy(contextMenu.showTime!)}
+            onSave={
+              editingId === contextMenu.showTime.id ? handleSave : undefined
+            }
+            onCancel={
+              editingId === contextMenu.showTime.id ? handleCancel : undefined
+            }
+            onClose={handleCloseContextMenu}
+            isEditing={editingId === contextMenu.showTime.id}
+          />
+        </div>
       )}
 
       {(createShowTimeMutation.isPending ||

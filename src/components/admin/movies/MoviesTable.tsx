@@ -146,6 +146,9 @@ export function MoviesTable() {
                   Возраст
                 </th>
                 <th className="px-3 md:px-6 py-4 text-left text-xs md:text-sm font-semibold text-purple-200">
+                  Премьера
+                </th>
+                <th className="px-3 md:px-6 py-4 text-left text-xs md:text-sm font-semibold text-purple-200">
                   Жанры
                 </th>
                 <th className="px-3 md:px-6 py-4 text-right text-xs md:text-sm font-semibold text-purple-200">
@@ -168,7 +171,7 @@ export function MoviesTable() {
                       />
                       {editingId === movie.id && (
                         <div
-                          className="absolute inset-0 flex items-center justify-center 
+                          className="absolute inset-0 flex items-center justify-center
                           bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
                         >
                           <label className="cursor-pointer w-full h-full flex items-center justify-center">
@@ -211,7 +214,7 @@ export function MoviesTable() {
                             title: e.target.value,
                           })
                         }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
@@ -232,14 +235,14 @@ export function MoviesTable() {
                             })
                           }
                           rows={4}
-                          className="w-full p-3 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                          className="w-full p-3 bg-purple-900/50 border border-purple-700/30 rounded-lg
                             text-purple-200 focus:outline-none focus:border-purple-500 text-sm
-                            scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-purple-900/30 
+                            scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-purple-900/30
                             hover:scrollbar-thumb-purple-500 hover:bg-purple-900/70 transition-colors"
                           placeholder="Введите описание фильма..."
                         />
                         <div
-                          className="absolute bottom-2 right-3 text-xs text-purple-400/80 
+                          className="absolute bottom-2 right-3 text-xs text-purple-400/80
                           bg-purple-950/80 px-2 py-0.5 rounded-md"
                         >
                           {editingData.description.length}
@@ -248,14 +251,14 @@ export function MoviesTable() {
                     ) : (
                       <div className="group relative max-w-md">
                         <div
-                          className="text-purple-200 text-sm line-clamp-2 group-hover:line-clamp-none 
+                          className="text-purple-200 text-sm line-clamp-2 group-hover:line-clamp-none
                           transition-all duration-200"
                         >
                           {movie.description}
                         </div>
                         <div
-                          className="absolute bottom-0 right-0 text-xs text-purple-400/80 
-                          bg-purple-950/80 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 
+                          className="absolute bottom-0 right-0 text-xs text-purple-400/80
+                          bg-purple-950/80 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100
                           transition-opacity"
                         >
                           {movie.description.length}
@@ -277,7 +280,7 @@ export function MoviesTable() {
                         step="0.1"
                         min="0"
                         max="10"
-                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
@@ -297,12 +300,32 @@ export function MoviesTable() {
                             year: e.target.value,
                           })
                         }
-                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
                       <span className="text-purple-200 text-sm">
                         {movie.year}
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-3 md:px-6 py-3 md:py-4">
+                    {editingId === movie.id ? (
+                      <input
+                        type="checkbox"
+                        checked={editingData.premiere}
+                        onChange={(e) =>
+                          setEditingData({
+                            ...editingData,
+                            premiere: e.target.checked,
+                          })
+                        }
+                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
+                          text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
+                      />
+                    ) : (
+                      <span className="text-purple-200 text-sm">
+                        {movie.premiere ? "Да" : "Нет"}
                       </span>
                     )}
                   </td>
@@ -317,7 +340,7 @@ export function MoviesTable() {
                             ageRestriction: e.target.value,
                           })
                         }
-                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-24 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       />
                     ) : (
@@ -329,7 +352,7 @@ export function MoviesTable() {
                   <td className="px-3 md:px-6 py-3 md:py-4">
                     {editingId === movie.id ? (
                       <div
-                        className="max-h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-600 
+                        className="max-h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-600
                         scrollbar-track-purple-900/30 hover:scrollbar-thumb-purple-500"
                       >
                         <div className="flex flex-wrap gap-1.5 p-2 bg-purple-900/30 rounded-lg">
@@ -386,7 +409,7 @@ export function MoviesTable() {
                         <>
                           <button
                             onClick={() => handleUpdate(movie.id as number)}
-                            className="p-1.5 md:p-2 bg-green-600/80 rounded-lg text-white 
+                            className="p-1.5 md:p-2 bg-green-600/80 rounded-lg text-white
                               hover:bg-green-500 transition-colors flex items-center gap-1"
                           >
                             <Save size={16} />
@@ -394,7 +417,7 @@ export function MoviesTable() {
                           </button>
                           <button
                             onClick={() => setEditingId(null)}
-                            className="p-1.5 md:p-2 bg-gray-600/80 rounded-lg text-white 
+                            className="p-1.5 md:p-2 bg-gray-600/80 rounded-lg text-white
                               hover:bg-gray-500 transition-colors flex items-center gap-1"
                           >
                             <X size={16} />
@@ -405,7 +428,7 @@ export function MoviesTable() {
                         <>
                           <button
                             onClick={() => handleEdit(movie)}
-                            className="p-1.5 md:p-2 bg-yellow-600/80 rounded-lg text-white 
+                            className="p-1.5 md:p-2 bg-yellow-600/80 rounded-lg text-white
                               hover:bg-yellow-500 transition-colors flex items-center gap-1"
                           >
                             <Pencil size={16} />
@@ -421,7 +444,7 @@ export function MoviesTable() {
                                 deleteMovieMutation.mutate(movie.id as number);
                               }
                             }}
-                            className="p-1.5 md:p-2 bg-red-600/80 rounded-lg text-white 
+                            className="p-1.5 md:p-2 bg-red-600/80 rounded-lg text-white
                               hover:bg-red-500 transition-colors flex items-center gap-1"
                           >
                             <Trash2 size={16} />
@@ -429,7 +452,7 @@ export function MoviesTable() {
                           </button>
                           <button
                             onClick={() => handleCopy(movie)}
-                            className="p-1.5 md:p-2 bg-blue-600/80 rounded-lg text-white 
+                            className="p-1.5 md:p-2 bg-blue-600/80 rounded-lg text-white
                               hover:bg-blue-500 transition-colors flex items-center gap-1"
                           >
                             <Copy size={16} />

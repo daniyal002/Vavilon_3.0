@@ -15,6 +15,7 @@ import { Menu, X } from 'lucide-react';
 import BookingSummariesTable from '../components/admin/summariesByPhone/BookingSummariesTable';
 import SettingsTable from '../components/admin/settings/SettingsTable';
 import { useNavigate } from 'react-router-dom';
+import { subscribeToPushNotifications } from '../utils/pushNotifications';
 
 type AdminTab =
   | 'genres'
@@ -60,6 +61,29 @@ export function AdminPage() {
     {id:'settings',label: 'Настройки'}
   ];
 
+
+
+useEffect(() => {
+  async function registerSubscription() {
+    try {
+
+      const subscription = await subscribeToPushNotifications();
+
+
+      await fetch(`${import.meta.env.VITE_API_URL}/subscriptions/save-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription }),
+      });
+
+      console.log('Подписка успешно зарегистрирована');
+    } catch (error) {
+      console.error('Ошибка регистрации подписки:', error);
+    }
+  }
+
+  registerSubscription();
+}, []);
   return (
     <div className="relative min-h-screen md:flex">
       {/* Кнопка открытия сайдбара на мобильных */}

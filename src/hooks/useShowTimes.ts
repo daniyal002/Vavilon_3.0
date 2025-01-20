@@ -19,6 +19,14 @@ export const useShowTimes = () => {
     },
   });
 
+  const showAllTimesQuery = () => useQuery({
+    queryKey: ["allShowTimes"],
+    queryFn: async () => {
+      const { data } = await axiosAuth.get<ShowTimesResponse>("/showtimes/getAllShowTimes");
+      return data;
+    },
+  });
+
   // Получение сеансов с бронированиями для админки
   const useShowTimesWithBookings = () =>
     useQuery({
@@ -41,7 +49,7 @@ export const useShowTimes = () => {
       return data;
     },
     onSuccess: (newShowTime) => {
-      queryClient.setQueryData<ShowTimesResponse>(["showTimes"], (oldData) => {
+      queryClient.setQueryData<ShowTimesResponse>(["allShowTimes"], (oldData) => {
         if (!oldData) {
           return { showTimes: [newShowTime], ENABLE_PROMOCODE: false }; // или true, в зависимости от вашей логики
         }
@@ -64,7 +72,7 @@ export const useShowTimes = () => {
       return data;
     },
     onSuccess: (updatedShowTime) => {
-      queryClient.setQueryData<ShowTimesResponse>(["showTimes"], (oldData) => {
+      queryClient.setQueryData<ShowTimesResponse>(["allShowTimes"], (oldData) => {
         if (!oldData) return { showTimes: [updatedShowTime], ENABLE_PROMOCODE: false };
         return {...oldData,
           showTimes: oldData.showTimes.map((showTime) =>
@@ -81,7 +89,7 @@ export const useShowTimes = () => {
       return id;
     },
     onSuccess: (deletedId) => {
-      queryClient.setQueryData<ShowTimesResponse>(["showTimes"], (oldData) => {
+      queryClient.setQueryData<ShowTimesResponse>(["allShowTimes"], (oldData) => {
         if (!oldData) return { showTimes: [], ENABLE_PROMOCODE: false };
         return {...oldData,
           showTimes: oldData.showTimes.filter((showTime) =>
@@ -123,5 +131,6 @@ export const useShowTimes = () => {
     deleteShowTimeMutation,
     useCheckBooking,
     useShowTime,
+    showAllTimesQuery,
   };
 };
