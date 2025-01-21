@@ -201,7 +201,7 @@ export function PromoCodesTable() {
                             code: e.target.value,
                           })
                         }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500"
                       />
                     ) : (
@@ -218,7 +218,7 @@ export function PromoCodesTable() {
                             type: e.target.value,
                           })
                         }
-                        className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
                        text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
                       >
                         <option value="PERCENTAGE">Процент</option>
@@ -240,7 +240,7 @@ export function PromoCodesTable() {
                             value: e.target.value,
                           })
                         }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500"
                       />
                     ) : (
@@ -249,24 +249,6 @@ export function PromoCodesTable() {
                   </td>
                   <td className="px-6 py-4 text-purple-200">
                     {editingId === promoCode.id ? (
-                      // <select
-                      //   value={editingData.productId}
-                      //   onChange={(e) =>
-                      //     setEditingData({
-                      //       ...editingData,
-                      //       productId: e.target.value,
-                      //     })
-                      //   }
-                      //   className="w-full p-2.5 bg-purple-900/50 border border-purple-700/30 rounded-lg
-                      //     text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
-                      // >
-                      //   <option value="">-</option>
-                      //   {productstData?.map((product) => (
-                      //     <option key={product.id} value={product.id}>
-                      //       {product.name}
-                      //     </option>
-                      //   ))}
-                      // </select>
                       <ProductSelect
                         products={productstData as Product[]}
                         selectedProductId={editingData.productId}
@@ -290,7 +272,7 @@ export function PromoCodesTable() {
                             startDate: e.target.value,
                           })
                         }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500"
                       />
                     ) : (
@@ -308,7 +290,7 @@ export function PromoCodesTable() {
                             endDate: e.target.value,
                           })
                         }
-                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg 
+                        className="w-full p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg
                           text-purple-200 focus:outline-none focus:border-purple-500"
                       />
                     ) : (
@@ -321,7 +303,7 @@ export function PromoCodesTable() {
                         <>
                           <button
                             onClick={() => handleUpdate(promoCode.id)}
-                            className="p-2 bg-green-600/80 rounded-lg text-white 
+                            className="p-2 bg-green-600/80 rounded-lg text-white
                               hover:bg-green-500 transition-colors flex items-center gap-1"
                           >
                             <Save size={16} />
@@ -329,7 +311,7 @@ export function PromoCodesTable() {
                           </button>
                           <button
                             onClick={() => setEditingId(null)}
-                            className="p-2 bg-gray-600/80 rounded-lg text-white 
+                            className="p-2 bg-gray-600/80 rounded-lg text-white
                               hover:bg-gray-500 transition-colors flex items-center gap-1"
                           >
                             <X size={16} />
@@ -340,7 +322,7 @@ export function PromoCodesTable() {
                         <>
                           <button
                             onClick={() => handleEdit(promoCode)}
-                            className="p-2 bg-yellow-600/80 rounded-lg text-white 
+                            className="p-2 bg-yellow-600/80 rounded-lg text-white
                               hover:bg-yellow-500 transition-colors flex items-center gap-1"
                           >
                             <Pencil size={16} />
@@ -356,7 +338,7 @@ export function PromoCodesTable() {
                                 deletePromoCodeMutation.mutate(promoCode.id);
                               }
                             }}
-                            className="p-2 bg-red-600/80 rounded-lg text-white 
+                            className="p-2 bg-red-600/80 rounded-lg text-white
                               hover:bg-red-500 transition-colors flex items-center gap-1"
                           >
                             <Trash2 size={16} />

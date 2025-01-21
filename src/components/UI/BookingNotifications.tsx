@@ -8,7 +8,13 @@ const BookingNotifications = () => {
 
   useEffect(() => {
     const ws = new WebSocket(`${import.meta.env.VITE_API_WS}`); // Убедитесь, что порт совпадает с вашим сервером
+    ws.onopen = () => {
+        console.log('WebSocket соединение установлено');
+    };
 
+    ws.onerror = (error) => {
+        console.error('Ошибка WebSocket:', error);
+    };
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "NEW_BOOKING") {

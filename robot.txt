@@ -1,0 +1,5 @@
+Sitemap: http://kinovavilon.ru/sitemap.xml
+Disallow: /admin/
+Host: kinovavilon.ru
+User-agent: Yandex
+User-agent: Googlebot

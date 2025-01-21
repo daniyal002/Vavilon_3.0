@@ -245,7 +245,6 @@ export function AddMovieForm({
 
         {/* Кнопка добавления */}
         <button
-          // onClick={handleSubmit}
           disabled={!formData.title.trim() || isLoading}
           type='submit'
           className="w-full mt-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg
