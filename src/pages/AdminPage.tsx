@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { GenresTable } from '../components/admin/genres/GenresTable';
 import { TheatersTable } from '../components/admin/theaters/TheatersTable';
 import { MoviesTable } from '../components/admin/movies/MoviesTable';
-import { LoginPage } from './LoginPage';
 import { getAccessToken } from '../services/auth-token.service';
 import { ShowTimesTable } from '../components/admin/showtimes/ShowTimesTable';
 import { PromoCodesTable } from '../components/admin/promocodes/PromoCodesTable';
@@ -16,6 +15,7 @@ import BookingSummariesTable from '../components/admin/summariesByPhone/BookingS
 import SettingsTable from '../components/admin/settings/SettingsTable';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToPushNotifications } from '../utils/pushNotifications';
+import BookingNotifications from '../components/UI/BookingNotifications';
 
 type AdminTab =
   | 'genres'
@@ -86,6 +86,7 @@ useEffect(() => {
 }, []);
   return (
     <div className="relative min-h-screen md:flex">
+
       {/* Кнопка открытия сайдбара на мобильных */}
       <button
         onClick={() => setSidebarOpen(!isSidebarOpen)}
@@ -141,6 +142,8 @@ useEffect(() => {
 
       {/* Основной контент */}
       <div className="flex-1 p-4">
+        <BookingNotifications/>
+
         <div className="space-y-6">
           {activeTab === 'genres' ? (
             <>
