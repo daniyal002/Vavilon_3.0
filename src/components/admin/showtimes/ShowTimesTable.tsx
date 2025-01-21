@@ -14,6 +14,7 @@ import { useShowTimes } from '../../../hooks/useShowTimes';
 import { AddShowTimeForm } from './AddShowTimeForm';
 import { Pagination } from '../Pagination';
 import { formatTime } from '../../../utils/formatters';
+import { TableControls } from '../TableControls';
 
 type ShowTimeCopy = Pick<
   ShowTime,
@@ -180,10 +181,15 @@ export function ShowTimesTable() {
   const [showCurrent,setShowCurrent] = useState<boolean>(false)
   const filteredAndPaginatedData = useMemo(() => {
     const currentTime = new Date();
-    const filtered = showAllTimes?.showTimes?.filter((showTime) => {
-      const showStartTime = new Date(showTime.startTime);
-      return showCurrent ? showStartTime >= currentTime : showStartTime < currentTime; // Фильтрация по актуальности
-    }) || [];
+    const filtered = showAllTimes?.showTimes
+      ?.filter((showTime) => {
+        const showStartTime = new Date(showTime.startTime);
+        return showCurrent ? showStartTime >= currentTime : showStartTime < currentTime; // Фильтрация по актуальности
+      })
+      .filter((showTime) => {
+        const movieTitle = showTime.movie?.title || ''; // Проверяем наличие заголовка
+        return movieTitle.toLowerCase().includes(searchQuery.toLowerCase());
+      }) || [];
 
     const sorted = filtered.sort((a, b) => {
       const dateA = new Date(a.date).getTime();
@@ -198,9 +204,13 @@ export function ShowTimesTable() {
     const paginated = sorted.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return { showTimes: paginated, totalPages, totalItems };
-  }, [showAllTimes, currentPage, itemsPerPage,showCurrent]);
+  }, [showAllTimes, currentPage, itemsPerPage, searchQuery, showCurrent]);
 
   const contextMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [showCurrent,searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
@@ -226,6 +236,10 @@ export function ShowTimesTable() {
     };
   }, [contextMenu.visible]);
 
+  if (!showAllTimes || !showAllTimes.showTimes) {
+    return <div>Загрузка данных...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <AddShowTimeForm
@@ -238,7 +252,7 @@ export function ShowTimesTable() {
       />
 
       {/* Поиск */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <input
           type="text"
           placeholder="Поиск..."
@@ -246,7 +260,17 @@ export function ShowTimesTable() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full sm:w-1/3 p-2 bg-purple-900/50 border border-purple-700/30 rounded-lg text-purple-200 focus:outline-none focus:border-purple-500 text-sm"
         />
-      </div>
+      </div> */}
+
+        <TableControls
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              itemsPerPage={itemsPerPage}
+              onItemsPerPageChange={(value) => {
+                setItemsPerPage(value);
+                setCurrentPage(1);
+              }}
+            />
 
       <div className="flex justify-start gap-4">
         <button

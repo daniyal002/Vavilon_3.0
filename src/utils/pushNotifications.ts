@@ -2,7 +2,7 @@
 
 export const subscribeToPushNotifications = async (): Promise<PushSubscription | null> => {
   if (!('serviceWorker' in navigator && 'PushManager' in window)) {
-    alert('Push API не поддерживается этим браузером');
+    console.error('Push API не поддерживается этим браузером');
     return null;
   }
 

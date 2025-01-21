@@ -104,7 +104,7 @@ useEffect(() => {
 
       {/* Сайдбар */}
       <div
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-purple-950/80 backdrop-blur-xl
+        className={`absolute md:sticky top-0 left-0 h-screen w-64 bg-purple-950/80 backdrop-blur-xl
           border-r border-purple-500/10 transform transition-transform duration-300 z-50
           overflow-y-auto md:overflow-y-visible
           ${
