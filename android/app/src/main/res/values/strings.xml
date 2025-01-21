@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">vavilon-mobile</string>
+    <string name="title_activity_main">vavilon-mobile</string>
+    <string name="package_name">ru.kinovavilon.app</string>
+    <string name="custom_url_scheme">ru.kinovavilon.app</string>
+</resources>
