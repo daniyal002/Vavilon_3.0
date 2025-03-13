@@ -16,7 +16,7 @@ import SettingsTable from '../components/admin/settings/SettingsTable';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToPushNotifications } from '../utils/pushNotifications';
 import BookingNotifications from '../components/UI/BookingNotifications';
-import { InstagramListShowtimes } from '../components/admin/instagramListShowtimes/instagramListShowtimes';
+import { InstagramListShowtimes } from '../components/admin/instagramListShowtimes/InstagramListShowtimes';
 
 type AdminTab =
   | 'genres'
