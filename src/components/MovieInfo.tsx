@@ -1,4 +1,3 @@
-import React from 'react';
 import { Clock, BadgeRussianRuble } from 'lucide-react';
 
 interface MovieInfoProps {

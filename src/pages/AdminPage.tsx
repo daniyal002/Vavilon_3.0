@@ -16,6 +16,7 @@ import SettingsTable from '../components/admin/settings/SettingsTable';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToPushNotifications } from '../utils/pushNotifications';
 import BookingNotifications from '../components/UI/BookingNotifications';
+import { InstagramListShowtimes } from '../components/admin/instagramListShowtimes/instagramListShowtimes';
 
 type AdminTab =
   | 'genres'
@@ -29,7 +30,8 @@ type AdminTab =
   | 'userRoles'
   | 'bookings'
   | 'bookingSummaries'
-  | 'settings';
+  | 'settings'
+  | 'instagramList';
 
 export function AdminPage() {
   const isAuthenticated = getAccessToken();
@@ -58,7 +60,8 @@ export function AdminPage() {
     { id: 'userRoles', label: 'Управление ролями пользователей' },
     { id: 'bookings', label: 'Управление бронированиями' },
     { id:'bookingSummaries', label: 'Количество броней'},
-    {id:'settings',label: 'Настройки'}
+    {id:'settings',label: 'Настройки'},
+    {id:'instagramList',label: 'Инстаграм'}
   ];
 
 
@@ -222,13 +225,20 @@ useEffect(() => {
             </h2>
             <BookingSummariesTable />
           </>
-          ): (
+          ) : activeTab === 'settings' ? (
             <>
             <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
               Настройки
             </h2>
             <SettingsTable />
           </>
+          ) : (
+            <>
+            <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+              Настройки
+            </h2>
+            <InstagramListShowtimes />
+            </>
           )}
         </div>
       </div>

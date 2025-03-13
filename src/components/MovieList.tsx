@@ -5,7 +5,6 @@ import { Toaster } from 'react-hot-toast';
 import { useShowTimes } from '../hooks/useShowTimes';
 import { MovieCard } from './MovieCard';
 import { ShowTime } from '../types/showtime';
-import { MoveLeft, MoveRight } from 'lucide-react';
 
 export function MovieList() {
   const [selectedTheater, setSelectedTheater] = useState<string | null>(null);
