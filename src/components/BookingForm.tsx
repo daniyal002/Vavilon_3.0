@@ -43,7 +43,7 @@ export function BookingForm({
 
   const basePrice =
     showTime.price *
-    (showTime.theater.type === 'VIP' ? selectedSeats.length : seats);
+    (showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE' ? selectedSeats.length : seats);
 
   const totalPrice = basePrice - basePrice * discount;
 
@@ -76,14 +76,14 @@ export function BookingForm({
         showTimeId: showTime.id,
         phone: phoneNumber.replace(/\D/g, ''),
         reservedSeats:
-          showTime.theater.type === 'VIP' ? selectedSeats.length : seats,
+          showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE' ? selectedSeats.length : seats,
         totalAmount: totalPrice,
         row:
-          showTime.theater.type === 'VIP'
+          showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE'
             ? selectedSeats.map((s) => s.row)
             : undefined,
         seatPerRow:
-          showTime.theater.type === 'VIP'
+          showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE'
             ? selectedSeats.map((s) => s.seat)
             : undefined,
         productId:promoCodeProduct?.id
@@ -97,17 +97,17 @@ export function BookingForm({
             imageUrl: showTime.movie.imagePath as string,
             phoneNumber: phoneNumber.replace(/\D/g, ''),
             seats:
-              showTime.theater.type === 'VIP' ? selectedSeats.length : seats,
+              showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE' ? selectedSeats.length : seats,
             totalPrice: totalPrice,
             showtime: formatTime(showTime.startTime.toString()),
             bookingDate: new Date().toISOString(),
             movieId: showTime.movieId.toString(),
             row:
-              showTime.theater.type === 'VIP'
+              showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE'
                 ? selectedSeats.map((s) => s.row)
                 : undefined,
             seatPerRow:
-              showTime.theater.type === 'VIP'
+              showTime.theater.type === 'VIP' || showTime.theater.type === 'FLEXIBLE'
                 ? selectedSeats.map((s) => s.seat)
                 : undefined,
             theaterType: showTime.theater.type,
@@ -170,7 +170,7 @@ export function BookingForm({
     <div className="bg-purple-950/50 rounded-xl p-6 shadow-lg animate-fadeSlide">
       <div className="flex justify-between items-start mb-6">
         <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-          {editMode ? 'Редактирование брони' : 'Бронирование билетов'}
+          {editMode ? "Редактирование брони" : "Бронирование билетов"}
         </h3>
         <button
           onClick={onCancel}
@@ -197,18 +197,29 @@ export function BookingForm({
           required={true}
         />
 
-        {showTime.theater.type === 'VIP' ? (
-          showTime.theater.rows &&
-          showTime.theater.seatsPerRow && (
-            <SeatSelector
-              rows={showTime.theater.rows}
-              seatsPerRow={showTime.theater.seatsPerRow}
-              selectedSeats={selectedSeats}
-              onSelect={handleSeatSelect}
-              maxSeats={showTime.theater.rows * showTime.theater.seatsPerRow}
-              bookedSeats={bookedSeats}
-            />
-          )
+        {showTime.theater.type === "VIP" &&
+        showTime.theater.rows &&
+        showTime.theater.seatsPerRow ? (
+          <SeatSelector
+            rows={showTime.theater.rows}
+            seatsPerRow={showTime.theater.seatsPerRow}
+            selectedSeats={selectedSeats}
+            onSelect={handleSeatSelect}
+            maxSeats={showTime.theater.rows * showTime.theater.seatsPerRow}
+            bookedSeats={bookedSeats}
+            layoutType="VIP"
+          />
+        ) : showTime.theater.type === "FLEXIBLE" ? (
+          <SeatSelector
+            rows={6} // например, 6 рядов по умолчанию
+            seatsPerRow={10} // 10 мест в ряду по умолчанию
+            selectedSeats={selectedSeats}
+            onSelect={handleSeatSelect}
+            maxSeats={showTime.theater.rowLayout?.reduce((sum, row) => sum + row.seats, 0) ?? 0}
+            bookedSeats={bookedSeats}
+            layoutType="FLEXIBLE"
+            rowLayout={showTime.theater.rowLayout}
+          />
         ) : (
           <NumberInput
             label="Количество мест"
@@ -218,21 +229,20 @@ export function BookingForm({
             max={showTime.availableSeats}
           />
         )}
-      {ENABLE_PROMOCODE && (
-        <PromoCodeInput
-          value={promoCode}
-          onChange={setPromoCode}
-          onApply={handleApplyPromo}
-          error={promoError}
-        />
-      )}
-        
+        {ENABLE_PROMOCODE && (
+          <PromoCodeInput
+            value={promoCode}
+            onChange={setPromoCode}
+            onApply={handleApplyPromo}
+            error={promoError}
+          />
+        )}
 
         {discount > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-purple-300">Скидка:</span>
             <span className="text-green-400">
-              {Math.round(discount * 100)}% (-{Math.round(basePrice * discount)}{' '}
+              {Math.round(discount * 100)}% (-{Math.round(basePrice * discount)}{" "}
               ₽)
             </span>
           </div>

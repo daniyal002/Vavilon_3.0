@@ -44,13 +44,13 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
     >
       <div
         className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d
-        ${isFlipped ? '-rotate-y-180' : ''}`}
+        ${isFlipped ? "-rotate-y-180" : ""}`}
       >
         {/* Лицевая сторона */}
         <div
           className={`w-full h-full bg-purple-900/40 rounded-xl overflow-hidden
           transition-opacity duration-700 backface-hidden
-          ${isFlipped ? 'opacity-0 invisible' : 'opacity-100 visible'}`}
+          ${isFlipped ? "opacity-0 invisible" : "opacity-100 visible"}`}
         >
           {/* Изображение */}
           <div className="relative h-48 w-full">
@@ -81,24 +81,51 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
             <div className="text-sm text-white space-y-1">
               <p>
                 <span className="font-semibold">Сеанс: </span>
-                {new Date(props.date).toLocaleDateString('ru-RU')}-
+                {new Date(props.date).toLocaleDateString("ru-RU")}-
                 {props.showtime}
               </p>
 
-              {props.seatPerRow ? (
-                <p>
-                  <span className="font-semibold">Места: </span>
-                  {props.seatPerRow}
-                </p>
-              ) : (
-                <p>
-                  <span className="font-semibold">Места: </span> {props.seats}
-                </p>
-              )}
+             
               <p>
                 <span className="font-semibold">Телефон: </span>
                 {props.phoneNumber}
               </p>
+
+                {(props.theaterType === "FLEXIBLE" || props.theaterType === "VIP") && props.row  ? (
+                  <div className="text-sm text-purple-300 space-y-1">
+                    {Object.entries(
+                      props.row.reduce(
+                        (acc: Record<number, number[]>, rowNumber, index) => {
+                          const seatNumber = props.seatPerRow?.[index];
+                          if (!seatNumber) return acc;
+
+                          if (!acc[rowNumber]) acc[rowNumber] = [];
+                          acc[rowNumber].push(seatNumber);
+                          return acc;
+                        },
+                        {}
+                      )
+                    )
+                      .sort(([rowA], [rowB]) => Number(rowA) - Number(rowB)) // сортировка по рядам
+                      .map(([row, seats]) => (
+                        <div key={row}>
+                          Ряд {row}:{" "}
+                          {seats
+                            .sort((a, b) => a - b)
+                            .map((seat, idx) => (
+                              <span key={seat}>
+                                {seat} место{idx < seats.length - 1 ? ", " : ""}
+                              </span>
+                            ))}
+                        </div>
+                      ))}
+                  </div>
+                ) 
+               : (
+                <p>
+                  <span className="font-semibold">Места: </span> {props.seats}
+                </p>
+              )}
 
               {props.confirmation && (
                 <div className="text-green-600 font-semibold mt-2">
@@ -117,7 +144,7 @@ export function BookedPosterCard(props: BookedPosterCardProps) {
         <div
           className={` absolute top-0 left-0 w-full h-full  rounded-xl flex items-center justify-center
           transition-opacity duration-700 rotate-y-180
-          ${isFlipped ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+          ${isFlipped ? "opacity-100 visible" : "opacity-0 invisible"}`}
         >
           <div className="text-center p-4 z-40">
             <QRCodeCanvas
