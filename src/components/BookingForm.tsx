@@ -215,7 +215,7 @@ export function BookingForm({
             seatsPerRow={10} // 10 мест в ряду по умолчанию
             selectedSeats={selectedSeats}
             onSelect={handleSeatSelect}
-            maxSeats={showTime.theater.rowLayout?.reduce((sum, row) => sum + row.seats, 0) ?? 0}
+            maxSeats={showTime.theater.rowLayout?.reduce((sum, row) => sum + row.seats.length, 0) ?? 0}
             bookedSeats={bookedSeats}
             layoutType="FLEXIBLE"
             rowLayout={showTime.theater.rowLayout}
