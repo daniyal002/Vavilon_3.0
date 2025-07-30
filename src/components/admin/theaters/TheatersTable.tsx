@@ -79,7 +79,7 @@ export function TheatersTable() {
                 {paginatedTheaters.map((theater) => {
                   // Подсчёт вместимости для FLEXIBLE
                   const totalSeatsFlexible = theater.rowLayout
-                    ? theater.rowLayout.reduce((acc, row) => acc + row.seats, 0)
+                    ? theater.rowLayout.reduce((acc, row) => acc + row.seats.length , 0)
                     : 0;
 
                   return (
@@ -121,7 +121,7 @@ export function TheatersTable() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-purple-200">
                         {editingTheater?.id === theater.id ? (
                           // Рендерим поле rows для REGULAR и VIP
                           (editingTheater.type === 'REGULAR' || editingTheater.type === 'VIP') ? (
@@ -148,7 +148,7 @@ export function TheatersTable() {
                           theater.rows ?? '-'
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-purple-200">
                         {editingTheater?.id === theater.id ? (
                           (editingTheater.type === 'REGULAR' || editingTheater.type === 'VIP') ? (
                             <input

@@ -17,10 +17,12 @@ import { useNavigate } from 'react-router-dom';
 import { subscribeToPushNotifications } from '../utils/pushNotifications';
 import BookingNotifications from '../components/UI/BookingNotifications';
 import { InstagramListShowtimes } from '../components/admin/instagramListShowtimes/InstagramListShowtimes';
+import { SeatTypeTable } from '../components/admin/seatType/SeatTypeTable';
 
 type AdminTab =
   | 'genres'
   | 'theaters'
+  | 'seatTypes'
   | 'movies'
   | 'showtimes'
   | 'promocodes'
@@ -51,6 +53,7 @@ export function AdminPage() {
   const navigationButtons = [
     { id: 'genres', label: 'Управление жанрами' },
     { id: 'theaters', label: 'Управление залами' },
+    { id: 'seatTypes', label: 'Управление типами мест' },
     { id: 'movies', label: 'Управление фильмами' },
     { id: 'showtimes', label: 'Управление сеансами' },
     { id: 'promocodes', label: 'Управление промокодами' },
@@ -161,6 +164,13 @@ useEffect(() => {
                 Управление залами
               </h2>
               <TheatersTable />
+            </>
+          ) : activeTab === 'seatTypes' ? (
+            <>
+              <h2 className="text-lg md:text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                Управление типами мест
+              </h2>
+              <SeatTypeTable />
             </>
           ) : activeTab === 'movies' ? (
             <>
