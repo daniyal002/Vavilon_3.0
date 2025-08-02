@@ -123,22 +123,8 @@ export function SeatSelector({
   {/* 🔧 Zoom Control Buttons */}
   <div className="absolute top-2 right-2 flex gap-2 z-10">
     <button
-      onClick={() => setScale((s) => Math.min(s + 0.1, 2))}
-      className="p-1.5 rounded bg-purple-800 text-white hover:bg-purple-700 transition"
-      type="button"
-    >
-      <ZoomIn size={16} />
-    </button>
-    <button
-      onClick={() => setScale((s) => Math.max(s - 0.1, 0.5))}
-      className="p-1.5 rounded bg-purple-800 text-white hover:bg-purple-700 transition"
-      type="button"
-    >
-      <ZoomOut size={16} />
-    </button>
-    <button
       onClick={() => {
-        setScale(1);
+        setScale(0.9);
         setPosition({ x: 0, y: 0 });
       }}
       className="p-1.5 rounded bg-purple-800 text-white hover:bg-purple-700 transition"
@@ -167,7 +153,7 @@ export function SeatSelector({
       {/* 🎬 Экран */}
       <div className="flex flex-col items-center mb-4">
         <div className="text-center text-xs text-purple-400 mb-1">Экран</div>
-        <div className="w-40 h-1 bg-purple-500/30 rounded-full" />
+        <div className="w-64 h-1 bg-purple-500/30 rounded-full" />
       </div>
 
       {/* 🪑 Схема мест */}
@@ -208,9 +194,16 @@ export function SeatSelector({
                 );
               })}
             </div>
+            
             <span className="text-xs text-purple-400 w-4 text-left">{row.number}</span>
           </div>
         ))}
+        <div className="flex gap-3 mt-3">
+
+        {seatTypes.map(seat => (
+              <p className="text-purple-400">{seat.name[0]} - {seat.name}</p>
+            ))}
+            </div>
       </div>
     </div>
   </div>

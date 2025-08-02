@@ -1,42 +1,101 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from "react";
 
+// Кастомный хук для реализации панорамирования и масштабирования
 export const usePanZoom = () => {
+  // Ссылка на DOM-элемент контейнера, в котором происходит пан и зум
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  // Состояние текущего масштаба (scale), изначально 1 (100%)
+  const [scale, _setScale] = useState(0.9);
+
+  // Состояние текущей позиции (смещения) контейнера {x, y}
+  const [position, _setPosition] = useState({ x: 0, y: 0 });
+
+  // Флаг, указывающий, происходит ли сейчас перетаскивание мышью
   const [isDragging, setIsDragging] = useState(false);
+
+  // Координаты начала перетаскивания — позиция мыши при нажатии минус текущая позиция
   const [start, setStart] = useState({ x: 0, y: 0 });
 
-  // refs для хранения актуальных значений между рендерами и обработчиками
+  // refs для доступа к актуальному масштабу и позиции внутри обработчиков,
+  // т.к. setState асинхронен, а refs синхронны и не вызывают ререндер
   const scaleRef = useRef(scale);
   const positionRef = useRef(position);
-  const lastScaleRef = useRef(scale);
-  const lastPositionRef = useRef(position);
 
-  // флаг для requestAnimationFrame
-  const frameRequested = useRef(false);
+  // Функция установки масштаба с ограничением и перерасчётом позиции
+  const setScale = (newScale: number, center?: { x: number; y: number }) => {
+    // Ограничиваем масштаб от 0.5 до 2
+    const clampedScale = Math.max(0.5, Math.min(newScale, 2));
 
-  useEffect(() => {
-    scaleRef.current = scale;
-  }, [scale]);
+    // Если контейнер отсутствует или масштаб не изменился — выход
+    if (!containerRef.current || clampedScale === scaleRef.current) return;
 
-  useEffect(() => {
-    positionRef.current = position;
-  }, [position]);
+    const container = containerRef.current;
 
-  // Синхронизация последних значений для работы с тачами
-  useEffect(() => {
-    lastScaleRef.current = scale;
-  }, [scale]);
+    // Получаем размер и позицию контейнера относительно окна
+    const rect = container.getBoundingClientRect();
 
-  useEffect(() => {
-    lastPositionRef.current = position;
-  }, [position]);
+    // Координаты центра масштабирования относительно контейнера
+    // Если center не передан — берём центр контейнера
+    const cx = center?.x ?? rect.width / 2;
+    const cy = center?.y ?? rect.height / 2;
 
+    // Переводим координаты центра в координаты "мировые" — с учётом текущей позиции и масштаба
+    // (Какой координате в элементе контейнера соответствует точка центра масштабирования)
+    const worldX = (cx - positionRef.current.x) / scaleRef.current;
+    const worldY = (cy - positionRef.current.y) / scaleRef.current;
+
+    // Новый сдвиг позиции после изменения масштаба,
+    // чтобы точка центра масштабирования оставалась на месте
+    const newPosition = {
+      x: cx - worldX * clampedScale,
+      y: cy - worldY * clampedScale,
+    };
+
+    // Обновляем refs на новые значения
+    scaleRef.current = clampedScale;
+    positionRef.current = newPosition;
+
+    // Обновляем состояние React (будет вызван ререндер)
+    _setScale(clampedScale);
+    _setPosition(newPosition);
+  };
+
+  // Установка позиции (смещения) контейнера
+  const setPosition = (pos: { x: number; y: number }) => {
+    positionRef.current = pos; // обновляем ref
+    _setPosition(pos);         // обновляем состояние
+  };
+
+  // Обработчик нажатия мыши — начало перетаскивания
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    // Сохраняем позицию мыши относительно текущей позиции контейнера
+    setStart({
+      x: e.clientX - positionRef.current.x,
+      y: e.clientY - positionRef.current.y,
+    });
+  };
+
+  // Обработчик движения мыши — изменение позиции при перетаскивании
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return; // если не перетаскиваем — ничего не делаем
+    // Новая позиция — сдвиг мыши минус начальное смещение
+    const newPos = { x: e.clientX - start.x, y: e.clientY - start.y };
+    setPosition(newPos);
+  };
+
+  // Обработчик отпускания мыши — конец перетаскивания
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // useEffect для установки и очистки слушателей событий колесика мыши и тач-событий
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    // Вспомогательная функция — вычисляет расстояние между двумя касаниями
     const getDistance = (touches: TouchList) => {
       const [t1, t2] = [touches[0], touches[1]];
       const dx = t1.clientX - t2.clientX;
@@ -44,145 +103,120 @@ export const usePanZoom = () => {
       return Math.sqrt(dx * dx + dy * dy);
     };
 
-    const getMidpoint = (touches: TouchList) => ({
-      x: (touches[0].clientX + touches[1].clientX) / 2,
-      y: (touches[0].clientY + touches[1].clientY) / 2,
-    });
-
-    let touchDragStart = { x: 0, y: 0 };
-    let isTouchDragging = false;
-    let lastDistance: number | null = null;
-    let lastMidpoint: { x: number; y: number } | null = null;
-
-    // временные значения, которые обновляем в событиях
-    let nextScale = scaleRef.current;
-    let nextPosition = { ...positionRef.current };
-
-    const updateState = () => {
-      frameRequested.current = false;
-      setScale(nextScale);
-      setPosition(nextPosition);
+    // Вспомогательная функция — вычисляет середину между двумя касаниями
+    const getMidpoint = (touches: TouchList) => {
+      return {
+        x: (touches[0].clientX + touches[1].clientX) / 2,
+        y: (touches[0].clientY + touches[1].clientY) / 2,
+      };
     };
 
-    const requestUpdate = () => {
-      if (!frameRequested.current) {
-        frameRequested.current = true;
-        requestAnimationFrame(updateState);
-      }
-    };
+    // Переменные для отслеживания состояния тача
+    let lastDistance: number | null = null;               // последняя дистанция между пальцами (для пинча)
+    let isTouchDragging = false;                          // флаг, если идёт перетаскивание одним пальцем
+    let dragStart = { x: 0, y: 0 };                       // координаты начала перетаскивания
+    let pinchMidpoint: { x: number; y: number } | null = null;  // середина пинча
+    let pinchStartScale = scaleRef.current;               // масштаб при начале пинча
 
+    // Обработчик колесика мыши — масштабирование
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
+      // Определяем направление масштабирования (увеличить или уменьшить)
       const delta = e.deltaY < 0 ? 0.1 : -0.1;
-      nextScale = Math.min(Math.max(0.5, scaleRef.current + delta), 2);
-      requestUpdate();
+      const newScale = scaleRef.current + delta;
+      const rect = container.getBoundingClientRect();
+
+      // Координаты мыши относительно контейнера — центр масштабирования
+      const localX = e.clientX - rect.left - 120;
+      const localY = e.clientY - rect.top - 120;
+      console.log("e.clientX: ",e.clientX,"rect.left: ", rect.left,"localX: ", localX)
+      console.log("e.clientY: ",e.clientY,"rect.top: ", rect.top,"localY: ", localY)
+
+      // Вызываем функцию установки масштаба с вычисленными координатами центра
+      setScale(newScale, { x: localX, y: localY });
     };
 
+    // Обработчик начала касания (тапа/перетаскивания)
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 1) {
+        // Один палец — начинаем перетаскивание
         isTouchDragging = true;
         const touch = e.touches[0];
-        touchDragStart = {
-          x: touch.clientX - lastPositionRef.current.x,
-          y: touch.clientY - lastPositionRef.current.y,
+        // Запоминаем точку начала перетаскивания с учётом текущей позиции
+        dragStart = {
+          x: touch.clientX - positionRef.current.x,
+          y: touch.clientY - positionRef.current.y,
         };
       } else if (e.touches.length === 2) {
+        // Два пальца — начинаем масштабирование (пинч)
         isTouchDragging = false;
-        lastDistance = getDistance(e.touches);
-        lastMidpoint = getMidpoint(e.touches);
-        lastScaleRef.current = scaleRef.current;
-        lastPositionRef.current = positionRef.current;
+        lastDistance = getDistance(e.touches);      // дистанция между пальцами в начале
+        pinchMidpoint = getMidpoint(e.touches);     // середина между пальцами
+        pinchStartScale = scaleRef.current;         // масштаб в начале пинча
       }
     };
 
+    // Обработчик движения пальцев
     const handleTouchMove = (e: TouchEvent) => {
       e.preventDefault();
 
       if (e.touches.length === 1 && isTouchDragging) {
+        // Перетаскивание одним пальцем — вычисляем новую позицию
         const touch = e.touches[0];
-        nextPosition = {
-          x: touch.clientX - touchDragStart.x,
-          y: touch.clientY - touchDragStart.y,
+        const newPos = {
+          x: touch.clientX - dragStart.x,
+          y: touch.clientY - dragStart.y,
         };
-        requestUpdate();
-      } else if (e.touches.length === 2) {
-        const newDistance = getDistance(e.touches);
-        const midpoint = getMidpoint(e.touches);
+        setPosition(newPos);
+      } else if (e.touches.length === 2 && lastDistance && pinchMidpoint) {
+        // Масштабирование двумя пальцами (пинч)
+        const newDistance = getDistance(e.touches);          // новая дистанция
+        const scaleChange = newDistance / lastDistance;      // коэффициент изменения масштаба
+        const newScale = pinchStartScale * scaleChange;      // новый масштаб
 
-        if (lastDistance && lastMidpoint) {
-          const distanceRatio = newDistance / lastDistance;
-          nextScale = Math.min(Math.max(0.5, lastScaleRef.current * distanceRatio), 2);
+        const rect = container.getBoundingClientRect();
+        // Центр масштабирования — середина между пальцами относительно контейнера
+        const localX = pinchMidpoint.x - rect.left - 120;
+        const localY = pinchMidpoint.y - rect.top - 120;
 
-          const scaleChange = nextScale / lastScaleRef.current;
-          nextPosition = {
-            x: midpoint.x - scaleChange * (midpoint.x - lastPositionRef.current.x),
-            y: midpoint.y - scaleChange * (midpoint.y - lastPositionRef.current.y),
-          };
-          requestUpdate();
-        }
+        setScale(newScale, { x: localX, y: localY });
       }
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (e.touches.length === 0) {
-        isTouchDragging = false;
-        lastDistance = null;
-        lastMidpoint = null;
-        lastScaleRef.current = scaleRef.current;
-        lastPositionRef.current = positionRef.current;
-      } else if (e.touches.length === 1) {
-        isTouchDragging = true;
-        const touch = e.touches[0];
-        touchDragStart = {
-          x: touch.clientX - lastPositionRef.current.x,
-          y: touch.clientY - lastPositionRef.current.y,
-        };
-        lastDistance = null;
-        lastMidpoint = null;
-        lastScaleRef.current = scaleRef.current;
-        lastPositionRef.current = positionRef.current;
-      }
+    // Обработчик окончания касания — сбрасываем состояние
+    const handleTouchEnd = () => {
+      isTouchDragging = false;
+      lastDistance = null;
+      pinchMidpoint = null;
     };
 
-    container.addEventListener('wheel', handleWheel, { passive: false });
-    container.addEventListener('touchstart', handleTouchStart, { passive: false });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd);
-    container.addEventListener('touchcancel', handleTouchEnd);
+    // Навешиваем слушатели событий на контейнер
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    container.addEventListener("touchstart", handleTouchStart, { passive: false });
+    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    container.addEventListener("touchend", handleTouchEnd);
+    container.addEventListener("touchcancel", handleTouchEnd);
 
+    // Чистим слушатели при размонтировании
     return () => {
-      container.removeEventListener('wheel', handleWheel);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-      container.removeEventListener('touchcancel', handleTouchEnd);
+      container.removeEventListener("wheel", handleWheel);
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+      container.removeEventListener("touchcancel", handleTouchEnd);
     };
   }, []);
 
-  // Мышиные обработчики
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setPosition({ x: e.clientX - start.x, y: e.clientY - start.y });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
+  // Возвращаем из хука refs, состояние и обработчики для управления из компонента
   return {
-    containerRef,
-    scale,
-    position,
-    isDragging,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-    setScale,
-    setPosition,
+    containerRef,               // ссылка на контейнер для навешивания событий и доступа к DOM
+    scale: scaleRef.current,    // текущий масштаб
+    position: positionRef.current, // текущая позиция (смещение)
+    isDragging,                 // флаг перетаскивания мышью
+    handleMouseDown,            // обработчик начала перетаскивания мышью
+    handleMouseMove,            // обработчик движения мышью
+    handleMouseUp,              // обработчик окончания перетаскивания
+    setScale,                   // функция установки масштаба с перерасчётом позиции
+    setPosition,                // функция установки позиции
   };
 };
