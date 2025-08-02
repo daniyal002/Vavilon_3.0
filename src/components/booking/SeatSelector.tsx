@@ -1,4 +1,4 @@
-import {  RefreshCcw,  ZoomIn, ZoomOut } from "lucide-react";
+import {  RefreshCcw} from "lucide-react";
 import { useSeatTypes } from "../../hooks/useSeatTypes";
 import { Row } from "../../types/theater";
 import { usePanZoom } from "../../hooks/usePanZoom";
