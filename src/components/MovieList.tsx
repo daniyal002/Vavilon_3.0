@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { useShowTimes } from '../hooks/useShowTimes';
 import { MovieCard } from './MovieCard';
 import { ShowTime } from '../types/showtime';
+import { Clapperboard } from 'lucide-react';
 
 export function MovieList() {
   const [selectedTheater, setSelectedTheater] = useState<string | null>(null);
@@ -70,6 +71,34 @@ export function MovieList() {
   const uniqueDates = Array.from(
     new Set(activeShowTimes.map((st) => getShowDate(st)))
   ).sort();
+
+  if (filteredShowTimes.length === 0) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 px-6 w-full animate-in fade-in zoom-in duration-500">
+      {/* Декоративное свечение на фоне */}
+      <div className="absolute w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full -z-10" />
+
+      {/* Иконка в красивом круге */}
+      <div className="relative mb-6">
+        <div className="absolute inset-0 bg-purple-500/20 blur-xl rounded-full" />
+        <div className="relative bg-purple-900/40 p-6 rounded-full border border-purple-500/30 shadow-2xl">
+          <Clapperboard size={48} className="text-purple-400 opacity-80" />
+        </div>
+      </div>
+
+      {/* Текстовый блок */}
+      <h3 className="text-2xl font-bold text-white mb-2 tracking-tight text-center">
+        На этот день пока пусто
+      </h3>
+      <p className="text-purple-300/60 max-w-[280px] text-center text-sm leading-relaxed">
+        Все фильмы на выбранную дату уже прошли или ещё не запланированы. Попробуйте заглянуть попозже!
+      </p>
+
+      {/* Декоративная линия */}
+      <div className="mt-8 w-12 h-1 bg-gradient-to-r from-transparent via-purple-500/40 to-transparent rounded-full" />
+    </div>
+  );
+}
 
   return (
     <div className="space-y-6">
