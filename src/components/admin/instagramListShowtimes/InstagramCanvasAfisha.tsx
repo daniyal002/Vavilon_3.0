@@ -126,8 +126,7 @@ export function InstagramCanvasAfisha({
     let itemHeight = 210;
     let gap = 35;
 
-    const clockIcon = await loadImage(`/icon/clock.svg`);
-
+    const ClockImg = await loadImage(`/icon/clock.svg`);
 
     if (count * (itemHeight + gap) > availableHeight) {
       const totalStep = availableHeight / count;
@@ -233,44 +232,18 @@ export function InstagramCanvasAfisha({
         timeBoxY + timeBoxHeight / 2 - 10
       );
 
-      // ЛОГИКА ВЫРАВНИВАНИЯ ИКОНКИ И ТЕКСТА
-      const timeStr = formatTime(st.startTime as unknown as string);
-      ctx.font = `bold ${Math.min(42, itemHeight / 5)}px sans-serif`;
-
-      const textWidth = ctx.measureText(timeStr).width;
-      const iconSize = 35; // размер иконки
-      const spacing = 8;   // отступ между иконкой и текстом
-      const totalContentWidth = iconSize + spacing + textWidth;
-
-      // Находим стартовую точку X, чтобы вся группа была по центру плашки
-      const groupStartX = rightX + (blockWidth - totalContentWidth) / 2;
-      const centerY = y + itemHeight * 0.05 + (itemHeight * 0.33) / 2;
-
-      // Рисуем иконку
-      ctx.drawImage(
-        clockIcon,
-        groupStartX,
-        centerY - iconSize / 2, // центрируем по вертикали
-        iconSize,
-        iconSize
-      );
-
-      // Рисуем текст (теперь textAlign="left", так как мы сами рассчитали центр для группы)
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "middle";
-      ctx.fillText(
-        timeStr,
-        groupStartX + iconSize + spacing,
-        centerY + 2
-      );
-      ctx.textBaseline = "alphabetic"; // сброс
-
       // 2. Блок ЦЕНЫ (Делаем ниже и компактнее, увеличивая отступ)
       const priceBoxHeight = itemHeight * 0.25; // Уменьшено с 0.3
       const priceBoxY = y + itemHeight * 0.65; // Создаем большой разрыв (0.45 + 0.08 = 0.53. Отступ будет 0.12 от itemHeight)
 
+      // ИКОНКА ЧАСОВ
+      const clockSize = Math.min(64, itemHeight / 4);
+      const clockX = rightX - 50;
+      const clockY = timeBoxY + 2;
 
+      ctx.save();
+      ctx.drawImage(ClockImg, clockX, clockY, clockSize, clockSize);
+      ctx.restore();
 
       ctx.fillStyle = "#460089";
       drawRoundedRect(
