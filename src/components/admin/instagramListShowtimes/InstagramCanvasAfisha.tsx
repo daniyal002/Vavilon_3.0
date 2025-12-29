@@ -188,8 +188,8 @@ export function InstagramCanvasAfisha({
       );
 
       // Жанры (рисуем относительно того, где закончился заголовок)
-      ctx.fillStyle = "#6b7280";
-      const genreFontSize = Math.min(24, itemHeight / 8);
+      ctx.fillStyle = "#000000";
+      const genreFontSize = Math.min(30, itemHeight / 8);
       ctx.font = `${genreFontSize}px sans-serif`;
 
       const genres =
@@ -238,7 +238,7 @@ export function InstagramCanvasAfisha({
 
       // ИКОНКА ЧАСОВ
       const clockSize = Math.min(64, itemHeight / 4);
-      const clockX = rightX - 50;
+      const clockX = rightX - 60;
       const clockY = timeBoxY + 2;
 
       ctx.save();
