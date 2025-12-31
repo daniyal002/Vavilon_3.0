@@ -12,7 +12,7 @@ export function InstagramListShowtimes() {
     const allSessions = showTimesQuery.data?.showTimes || [];
 
     // Определяем границы "кинодня" (от 05:00 выбранного дня до 05:00 следующего)
-    const dayStart = addHours(startOfDay(new Date(selectedDate)), 5);
+    const dayStart = addHours(startOfDay(new Date(selectedDate)), 8);
     const dayEnd = addHours(dayStart, 24);
 
     return allSessions

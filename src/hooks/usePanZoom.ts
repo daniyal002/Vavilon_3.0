@@ -129,8 +129,6 @@ export const usePanZoom = () => {
       // Координаты мыши относительно контейнера — центр масштабирования
       const localX = e.clientX - rect.left - 120;
       const localY = e.clientY - rect.top - 120;
-      console.log("e.clientX: ",e.clientX,"rect.left: ", rect.left,"localX: ", localX)
-      console.log("e.clientY: ",e.clientY,"rect.top: ", rect.top,"localY: ", localY)
 
       // Вызываем функцию установки масштаба с вычисленными координатами центра
       setScale(newScale, { x: localX, y: localY });

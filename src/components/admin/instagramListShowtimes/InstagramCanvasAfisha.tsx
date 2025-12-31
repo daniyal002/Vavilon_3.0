@@ -6,7 +6,7 @@ import { formatTime } from "../../../utils/formatters";
 import { ShowTime } from "../../../types/showtime";
 
 const STORY_WIDTH = 1080;
-const STORY_HEIGHT = 1920;
+const STORY_HEIGHT = 2000;
 
 export function InstagramCanvasAfisha({
   showTimes,
@@ -15,6 +15,7 @@ export function InstagramCanvasAfisha({
   showTimes: ShowTime[];
   selectedDate: string;
 }) {
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(0.4);
 
@@ -169,7 +170,7 @@ export function InstagramCanvasAfisha({
       ctx.textAlign = "left";
       ctx.fillStyle = "#460089";
 
-      const titleFontSize = Math.min(38, itemHeight / 5);
+      const titleFontSize = Math.min(38, itemHeight / 6);
       ctx.font = `bold ${titleFontSize}px sans-serif`;
 
       const titleX = 240;
