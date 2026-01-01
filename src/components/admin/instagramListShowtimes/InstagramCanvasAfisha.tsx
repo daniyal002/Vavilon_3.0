@@ -11,14 +11,16 @@ const STORY_HEIGHT = 2000;
 export function InstagramCanvasAfisha({
   showTimes,
   selectedDate,
+  refetch,
 }: {
   showTimes: ShowTime[];
   selectedDate: string;
+  refetch: () => void;
 }) {
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(0.4);
 
+  
   const loadImage = (src: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -69,7 +71,9 @@ export function InstagramCanvasAfisha({
       return currentY + lineHeight;
     };
 
+   
     ctx.clearRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+
 
     // 1. Фон
     const gradient = ctx.createLinearGradient(0, 0, 0, STORY_HEIGHT);
@@ -184,7 +188,7 @@ export function InstagramCanvasAfisha({
         st.movie.title.toUpperCase(),
         titleX,
         titleY,
-        maxWidth,
+        maxWidth - 80,
         lineHeight
       );
 
@@ -342,12 +346,31 @@ export function InstagramCanvasAfisha({
     ctx.closePath();
   }
 
+  const redrawCanvas = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Полный сброс canvas (важно)
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    await drawAfisha();
+  };
+
   useEffect(() => {
-    drawAfisha();
+    redrawCanvas();
   }, [showTimes, selectedDate]);
 
+  useEffect(() => {
+    refetch();
+  }, []);
+
+
   return (
-    <div className="flex flex-col items-center p-8 bg-purple-950/20 rounded-3xl">
+    <div className="flex flex-col items-center p-8  rounded-3xl">
       <div className="mb-6 flex gap-4 items-center w-full max-w-md bg-black/20 p-4 rounded-xl">
         <label className="text-white text-xs uppercase">Масштаб:</label>
         <input
@@ -381,6 +404,12 @@ export function InstagramCanvasAfisha({
         className="mt-8 px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold hover:scale-105 transition-all shadow-xl"
       >
         📥 СКАЧАТЬ ДЛЯ INSTAGRAM
+      </button>
+      <button
+        onClick={redrawCanvas}
+        className="mt-4 px-10 py-4 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-2xl font-bold hover:scale-105 transition-all shadow-xl"
+      >
+        🔄 ОБНОВИТЬ АФИШУ
       </button>
     </div>
   );

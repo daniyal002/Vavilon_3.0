@@ -8,6 +8,8 @@ export function InstagramListShowtimes() {
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
   const { showTimesQuery } = useShowTimes();
 
+  const { refetch } = showTimesQuery;
+
   const filteredShowTimes = useMemo(() => {
     const allSessions = showTimesQuery.data?.showTimes || [];
 
@@ -46,7 +48,7 @@ export function InstagramListShowtimes() {
       </div>
 
       {filteredShowTimes.length > 0 ? (
-        <InstagramCanvasAfisha showTimes={filteredShowTimes} selectedDate={selectedDate} />
+        <InstagramCanvasAfisha showTimes={filteredShowTimes} selectedDate={selectedDate} refetch={refetch} />
       ) : (
         <div className="text-purple-400">Сеансов не найдено</div>
       )}

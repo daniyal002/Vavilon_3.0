@@ -29,7 +29,7 @@ export function MovieList() {
   if (showTimesQuery.isError) {
     return <div className="text-red-400">Ошибка загрузки данных</div>;
   }
-  
+
   if (
     showTimesQuery.data?.showTimes &&
     showTimesQuery.data?.showTimes.length < 1
@@ -57,7 +57,7 @@ export function MovieList() {
         </p>
 
         {/* Декоративная линия */}
-        <div className="mt-8 w-12 h-1 bg-gradient-to-r from-transparent via-purple-500/40 to-transparent rounded-full" />
+        <div className="mt-8 w-12 h-1 bg-gradient-to-r from-transparent via-purple-500/40 to-transparent rounded-full"/>
       </div>
     );
   }
