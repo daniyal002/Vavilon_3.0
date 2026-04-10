@@ -103,6 +103,11 @@ export function AdminPage() {
       try {
         const subscription = await subscribeToPushNotifications();
 
+        if (!subscription) {
+          console.warn("Push-подписка не создана, отправка на backend пропущена");
+          return;
+        }
+
         await fetch(
           `${import.meta.env.VITE_API_URL}/subscriptions/save-subscription`,
           {

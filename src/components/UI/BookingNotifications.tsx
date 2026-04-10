@@ -1,4 +1,3 @@
-// src/components/BookingNotifications.js
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -7,20 +6,38 @@ const BookingNotifications = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const ws = new WebSocket(`${import.meta.env.VITE_API_WS}`); // Убедитесь, что порт совпадает с вашим сервером
+    const webSocketUrl = import.meta.env.VITE_API_WS;
+
+    if (!webSocketUrl) {
+      console.warn("VITE_API_WS не задан, realtime-уведомления отключены");
+      return;
+    }
+
+    let ws: WebSocket;
+
+    try {
+      ws = new WebSocket(webSocketUrl);
+    } catch (error) {
+      console.error("Некорректный URL для WebSocket:", error);
+      return;
+    }
+
     ws.onopen = () => {
-        console.log('WebSocket соединение установлено');
+      console.log("WebSocket соединение установлено");
     };
 
     ws.onerror = (error) => {
-        console.error('Ошибка WebSocket:', error);
+      console.error("Ошибка WebSocket:", error);
     };
+
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+      const data = JSON.parse(event.data) as { type?: string };
+
       if (data.type === "NEW_BOOKING") {
         toast.success("Новая бронь");
         queryClient.invalidateQueries({ queryKey: ["showTimesWithBookings"] });
       }
+
       if (data.type === "DELETE_BOOKING") {
         queryClient.invalidateQueries({ queryKey: ["showTimesWithBookings"] });
         toast.error("Бронь удалена");
@@ -30,7 +47,7 @@ const BookingNotifications = () => {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [queryClient]);
 
   return (
     <div>
