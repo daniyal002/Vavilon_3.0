@@ -23,16 +23,16 @@ export default defineConfig({
         "android-chrome-512x512.png",
       ],
       manifest: {
-        name: "Vavilon",
-        short_name: "Vavilon",
+        name: "Vavilon Admin",
+        short_name: "Vavilon Admin",
+        scope: "/admin/",      // ← ограничиваем область действия
+        start_url: "/admin/",  // ← запускаем из админки
         description: "Vavilon - кинотеатр на крыше",
         theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",
         lang: "ru",
-        scope: "/",
-        start_url: "/",
         icons: [
           {
             src: "/android-chrome-192x192.png",

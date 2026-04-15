@@ -32,6 +32,21 @@ const apiTarget = apiUrl ? new URL(apiUrl, APP_ORIGIN) : null;
 self.skipWaiting();
 clientsClaim();
 
+// 🚫 Полностью пропускаем /api мимо Service Worker
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Исключаем API-запросы (как относительные, так и абсолютные)
+  if (url.pathname.startsWith('/api')) {
+    return; // undefined = не перехватывать, браузер выполнит запрос напрямую
+  }
+  
+  // 🔐 Дополнительно: если API на другом домене (VITE_API_URL)
+  if (apiTarget && url.origin === apiTarget.origin) {
+    return;
+  }
+});
+
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
