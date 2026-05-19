@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { useBookings } from '../../../../hooks/useBookings';
 import { useShowTimes } from '../../../../hooks/useShowTimes';
-import { format, isAfter, isToday, parseISO } from 'date-fns';
+import { format, isAfter } from 'date-fns';
 import { SeatSelector } from '../../../booking/SeatSelector';
 import { NumberInput } from '../../../booking/NumberInput';
 import { PhoneInput } from '../../../booking/PhoneInput';
+import { formatTime } from '../../../../utils/formatters';
 
 interface AddShowTimeBookingFormProps {
   onSuccess: () => void;
 }
+
+const formatShowTimeDateTime = (startTime: Date | string) => {
+  return `${format(new Date(startTime), 'dd.MM.yyyy')}, ${formatTime(
+    startTime.toString()
+  )}`;
+};
 
 export function AddShowTimeBookingForm({
   onSuccess,
@@ -92,11 +99,16 @@ export function AddShowTimeBookingForm({
                 return (
                   isAfter(showTime.endTime, new Date())
                 );
-              }).map((showTime) => (
+              })
+              .sort(
+                (a, b) =>
+                  new Date(a.startTime).getTime() -
+                  new Date(b.startTime).getTime()
+              )
+              .map((showTime) => (
               <option key={showTime.id} value={showTime.id}>
                 {showTime.movie.title} -{' '}
-                {format(new Date(showTime.startTime), 'dd.MM.yyyy HH:mm')}(
-                {showTime.theater.name})
+                {formatShowTimeDateTime(showTime.startTime)} ({showTime.theater.name})
               </option>
             ))}
           </select>
@@ -129,6 +141,7 @@ export function AddShowTimeBookingForm({
               }}
               maxSeats={maxSeats}
               bookedSeats={bookedSeats}
+              layoutType='VIP'
             />
           ) : (
             <NumberInput
