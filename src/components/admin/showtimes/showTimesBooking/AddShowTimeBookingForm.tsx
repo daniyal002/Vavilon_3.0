@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import { useBookings } from '../../../../hooks/useBookings';
 import { useShowTimes } from '../../../../hooks/useShowTimes';
-import { format, isAfter } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { SeatSelector } from '../../../booking/SeatSelector';
 import { NumberInput } from '../../../booking/NumberInput';
 import { PhoneInput } from '../../../booking/PhoneInput';
-import { formatTime } from '../../../../utils/formatters';
+import { formatShowTimeDateTime } from '../../../../utils/formatters';
 
 interface AddShowTimeBookingFormProps {
   onSuccess: () => void;
 }
 
-const formatShowTimeDateTime = (startTime: Date | string) => {
-  return `${format(new Date(startTime), 'dd.MM.yyyy')}, ${formatTime(
-    startTime.toString()
-  )}`;
-};
 
 export function AddShowTimeBookingForm({
   onSuccess,
