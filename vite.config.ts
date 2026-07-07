@@ -54,4 +54,10 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["lucide-react"],
   },
+  preview: {
+    allowedHosts: [
+      "kinovavilon.ru",
+      "www.kinovavilon.ru",
+    ],
+  },
 });
