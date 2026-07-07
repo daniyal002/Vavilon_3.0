@@ -14,11 +14,13 @@ export function InstagramCanvasAfisha({
   selectedDate,
   refetch,
   theater,
+  bgImage,
 }: {
   showTimes: ShowTime[];
   selectedDate: string;
   refetch: () => void;
   theater: Theater;
+  bgImage: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(0.4);
@@ -76,11 +78,31 @@ export function InstagramCanvasAfisha({
     ctx.clearRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
 
     // 1. Фон
-    const gradient = ctx.createLinearGradient(0, 0, 0, STORY_HEIGHT);
-    gradient.addColorStop(0, "#2b034e");
-    gradient.addColorStop(1, "#5c1d9b");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+    try {
+      const bgImg = await loadImage(
+         bgImage,
+      );
+
+      const scale = Math.max(
+        STORY_WIDTH / bgImg.width,
+        STORY_HEIGHT / bgImg.height,
+      );
+
+      const width = bgImg.width * scale;
+      const height = bgImg.height * scale;
+
+      const x = (STORY_WIDTH - width) / 2;
+      const y = (STORY_HEIGHT - height) / 2;
+
+      ctx.drawImage(bgImg, x, y, width, height);
+
+      // затемнение, чтобы текст читался
+      ctx.fillStyle = "rgba(25, 0, 50, 0.65)";
+      ctx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+    } catch {
+      ctx.fillStyle = "#2b034e";
+      ctx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+    }
 
     // 2. Шапка
 

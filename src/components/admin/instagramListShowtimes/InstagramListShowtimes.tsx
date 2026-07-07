@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useShowTimes } from "../../../hooks/useShowTimes";
 import { InstagramCanvasAfisha } from "./InstagramCanvasAfisha";
 import { TheaterShowTimes } from "../../../types/showtime";
+import { BG_IMAGES } from "../../../constants";
 
 export function InstagramListShowtimes() {
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -67,6 +68,10 @@ export function InstagramListShowtimes() {
   if (showTimesQuery.isLoading)
     return <div className="text-purple-200">Загрузка...</div>;
 
+  const selectedBgImage = BG_IMAGES.find(
+    (item) => item.theaterId === selectedTheater?.theater.id,
+  )?.path || 'bg-afisha1.jpg';
+
   return (
     <div className="p-4 flex flex-col items-center w-full">
       <div className="flex gap-2 mb-8 overflow-x-auto w-full max-w-2xl pb-2">
@@ -108,12 +113,13 @@ export function InstagramListShowtimes() {
         ))}
       </div>
 
-      {groupedShowTimes.length > 0  && selectedTheater ? (
+      {groupedShowTimes.length > 0 && selectedTheater ? (
         <InstagramCanvasAfisha
-          showTimes={selectedTheater.showTimes }
+          showTimes={selectedTheater.showTimes}
           theater={selectedTheater.theater}
           selectedDate={selectedDate}
           refetch={refetch}
+          bgImage={selectedBgImage }
         />
       ) : (
         <div className="text-purple-400">Сеансов не найдено</div>
