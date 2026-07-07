@@ -16,7 +16,7 @@ export interface ShowTime {
   bookings: Booking[];
   reservedSeatsCount?: number;
   availableSeats?:number,
-  
+
 }
 
 export interface CreateShowTimeDTO {
@@ -40,4 +40,9 @@ export interface ShowTimesResponse {
 
 export interface IMovieCard extends ShowTime{
   ENABLE_PROMOCODE: boolean;
+}
+
+export interface TheaterShowTimes {
+  theater: Theater;
+  showTimes: ShowTime[];
 }

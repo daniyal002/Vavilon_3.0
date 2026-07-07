@@ -4,6 +4,7 @@ import { ru } from "date-fns/locale";
 import { baseURL } from "../../../api/axios";
 import { formatTime } from "../../../utils/formatters";
 import { ShowTime } from "../../../types/showtime";
+import { Theater } from "../../../types/theater";
 
 const STORY_WIDTH = 1080;
 const STORY_HEIGHT = 2000;
@@ -12,15 +13,16 @@ export function InstagramCanvasAfisha({
   showTimes,
   selectedDate,
   refetch,
+  theater,
 }: {
   showTimes: ShowTime[];
   selectedDate: string;
   refetch: () => void;
+  theater: Theater;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [zoom, setZoom] = useState(0.4);
 
-  
   const loadImage = (src: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -43,7 +45,7 @@ export function InstagramCanvasAfisha({
       x: number,
       y: number,
       maxWidth: number,
-      lineHeight: number
+      lineHeight: number,
     ) => {
       const words = text.split(" ");
       let line = "";
@@ -71,9 +73,7 @@ export function InstagramCanvasAfisha({
       return currentY + lineHeight;
     };
 
-   
     ctx.clearRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
-
 
     // 1. Фон
     const gradient = ctx.createLinearGradient(0, 0, 0, STORY_HEIGHT);
@@ -112,7 +112,7 @@ export function InstagramCanvasAfisha({
 
     ctx.font = "40px sans-serif";
     ctx.fillStyle = "#fff";
-    ctx.fillText("ЗАКРЫТЫЙ ЗАЛ НА КРЫШЕ", 480, 175);
+    ctx.fillText(theater.name.toUpperCase(), 480, 175);
 
     const LogoImg = await loadImage(`/icon/logo.svg`);
     ctx.save();
@@ -189,7 +189,7 @@ export function InstagramCanvasAfisha({
         titleX,
         titleY,
         maxWidth - 80,
-        lineHeight
+        lineHeight,
       );
 
       // Жанры (рисуем относительно того, где закончился заголовок)
@@ -225,7 +225,7 @@ export function InstagramCanvasAfisha({
         y + itemHeight * 0.05,
         blockWidth,
         itemHeight * 0.33,
-        15
+        15,
       );
       ctx.fill();
       ctx.fillStyle = "#ffffff";
@@ -234,7 +234,7 @@ export function InstagramCanvasAfisha({
       ctx.fillText(
         formatTime(st.startTime as unknown as string),
         rightX + blockWidth / 2,
-        timeBoxY + timeBoxHeight / 2 - 10
+        timeBoxY + timeBoxHeight / 2 - 10,
       );
 
       // 2. Блок ЦЕНЫ (Делаем ниже и компактнее, увеличивая отступ)
@@ -257,7 +257,7 @@ export function InstagramCanvasAfisha({
         priceBoxY,
         blockWidth / 1.3,
         priceBoxHeight + 10,
-        15
+        15,
       );
       ctx.fill();
 
@@ -266,7 +266,7 @@ export function InstagramCanvasAfisha({
       ctx.fillText(
         `${st.price} ₽`,
         rightX + blockWidth / 1.6,
-        priceBoxY + priceBoxHeight / 2 + 15
+        priceBoxY + priceBoxHeight / 2 + 15,
       );
 
       // Сброс настроек текста для следующей итерации
@@ -285,7 +285,7 @@ export function InstagramCanvasAfisha({
     ctx.fillText(
       "БРОНЬ БИЛЕТОВ ПО ССЫЛКЕ ИЛИ НОМЕРУ",
       STORY_WIDTH / 2,
-      footerStartY + 60
+      footerStartY + 60,
     );
 
     // Ссылка-стикер
@@ -321,7 +321,7 @@ export function InstagramCanvasAfisha({
     ctx.fillText(
       "БРОНЬ БЕСПЛАТНАЯ, ОПЛАТА ПРОИЗВОДИТСЯ НА МЕСТЕ",
       STORY_WIDTH / 2,
-      STORY_HEIGHT - 80
+      STORY_HEIGHT - 80,
     );
   };
 
@@ -331,7 +331,7 @@ export function InstagramCanvasAfisha({
     y: number,
     width: number,
     height: number,
-    radius: number
+    radius: number,
   ) {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -367,7 +367,6 @@ export function InstagramCanvasAfisha({
   useEffect(() => {
     refetch();
   }, []);
-
 
   return (
     <div className="flex flex-col items-center p-8  rounded-3xl">
